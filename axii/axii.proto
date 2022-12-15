@@ -1,0 +1,102 @@
+syntax = "proto3";
+package axii;
+option go_package = "github.com/impeccableai/impeccable/proto/axii";
+
+import "proto/workflow/workflow.proto";
+
+message CreateWorkflowAndRunRequest {
+  workflow.Workflow workflow = 1;
+}
+
+message CreateWorkflowAndRunResponse {
+  string workflow_uuid = 1;
+  string execution_id = 2;
+  workflow.Workflow workflow = 3;
+}
+
+message SubmitDraftRequest {
+  workflow.Draft draft = 1;
+}
+
+message SubmitDraftResponse {
+  string template_uuid = 1;
+  string experiment_uuid = 2;
+}
+
+message CancelExperimentRequest {
+  string experiment_uuid = 1;
+}
+
+message CancelExperimentResponse {}
+
+message CloneExperimentRequest {
+  string experiment_uuid = 1;
+}
+
+message CloneExperimentResponse {
+  string draft_uuid = 1;
+}
+
+message CreateRecurringExperimentFromExperimentRequest {
+  workflow.RecurringExperiment recurring_experiment = 1;
+  string experiment_uuid = 2;
+}
+
+message CreateRecurringExperimentFromExperimentResponse {
+  workflow.RecurringExperiment recurring_experiment = 1;
+}
+
+message EvalParametersRequest {
+  map<string, string> parameters = 1;
+}
+
+message EvalParametersResponse {
+  map<string, string> evaluated_parameters = 1;
+}
+
+message SubmitServiceRequest {
+  workflow.Service service = 1;
+}
+
+message SubmitServiceResponse {
+  workflow.ServiceStatus status = 1;
+}
+
+message StartServiceRequest {
+  string service_uuid = 1;
+}
+
+message StartServiceResponse {
+  workflow.ServiceStatus status = 1;
+}
+
+message PauseServiceRequest {
+  string service_uuid = 1;
+}
+
+message PauseServiceResponse {
+  workflow.ServiceStatus status = 1;
+}
+
+message DeleteServiceRequest {
+  string service_uuid = 1;
+}
+
+message DeleteServiceResponse {
+  bool deleted = 1;
+}
+
+service Axii {
+  rpc CloneExperiment(CloneExperimentRequest) returns (CloneExperimentResponse);
+  rpc SubmitDraft(SubmitDraftRequest) returns (SubmitDraftResponse);
+  rpc CancelExperiment(CancelExperimentRequest) returns (CancelExperimentResponse);
+
+  rpc CreateRecurringExperimentFromExperiment(CreateRecurringExperimentFromExperimentRequest) returns (CreateRecurringExperimentFromExperimentResponse);
+
+  rpc EvalParameters(EvalParametersRequest) returns (EvalParametersResponse);
+
+  rpc SubmitService(SubmitServiceRequest) returns (SubmitServiceResponse);
+  rpc StartService(StartServiceRequest) returns (StartServiceResponse);
+  rpc PauseService(PauseServiceRequest) returns (PauseServiceResponse);
+  rpc DeleteService(DeleteServiceRequest) returns (DeleteServiceResponse);
+}

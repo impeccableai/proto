@@ -1,0 +1,40 @@
+syntax = "proto3";
+package common;
+option go_package = "github.com/impeccableai/impeccable/proto/common";
+
+message PaginationOptions {
+  uint32 items_number = 1;
+  uint32 offset = 2;
+}
+
+message PaginationResponse {
+  uint32 offset = 1; // next offset to ask
+  uint32 total_items = 2;
+}
+
+enum FilterOperator {
+  FilterOperatorInvalid = 0;
+  FilterOperatorEqual = 1;
+  FilterOperatorNotEqual = 2;
+  FilterOperatorIn = 3;
+  FilterOperatorNotIn = 4;
+  FilterOperatorGT = 5;
+  FilterOperatorGTE = 6;
+  FilterOperatorLT = 7;
+  FilterOperatorLTE = 8;
+  FilterOperatorILike = 9;
+}
+
+message FilterValue {
+  oneof value {
+    string str_value = 1;
+    int64 int_value = 2;
+    double double_value = 3;
+    bool bool_value = 4;
+  }
+}
+
+message Filter {
+    FilterOperator operator = 2;
+    repeated FilterValue values = 3;
+}

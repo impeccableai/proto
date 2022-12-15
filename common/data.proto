@@ -1,0 +1,37 @@
+syntax = "proto3";
+package common;
+option go_package = "github.com/impeccableai/impeccable/proto/common";
+
+enum DataHint {
+  DATA_HINT_NONE = 0;
+  BINARY = 1;
+  TEXT = 2;
+  STRUCTURED_TEXT = 3;
+  IMAGE = 4;
+  AUDIO = 5;
+  VIDEO = 6;
+}
+
+enum DataKind {
+  DATA_KIND_INVALID = 0;
+  FS_FILE = 1;
+  FS_DIR = 2;
+  FS_ARCHIVE = 3 [deprecated = true];
+  reserved 4 to 10;
+  S3_FILE = 11;
+  S3_DIR = 12;
+  reserved 13 to 20;
+  GCS_FILE = 21;
+  GCS_DIR = 22;
+  reserved 23 to 30;
+}
+
+enum StorageMethod {
+  STORAGE_METHOD_INVALID = 0;
+  RAW = 1;
+  ARCHIVED = 2;
+}
+
+message StorageOptions {
+  StorageMethod storage_method = 1;
+}

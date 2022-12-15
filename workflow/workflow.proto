@@ -1,0 +1,524 @@
+syntax = "proto3";
+package workflow;
+option go_package = "github.com/impeccableai/impeccable/proto/workflow";
+
+import "google/protobuf/timestamp.proto";
+import "proto/workflow/ui.proto";
+import "proto/common/data.proto";
+import "proto/common/entities.proto";
+import "proto/common/resources.proto";
+
+message Workflow {
+  string uuid = 1;
+  string name = 2 [deprecated=true];
+
+  repeated Node nodes = 3;
+  repeated Edge edges = 4;
+
+  google.protobuf.Timestamp created_at = 5 [deprecated=true];
+  google.protobuf.Timestamp updated_at = 6 [deprecated=true];
+  string parent_experiment_uuid = 7 [deprecated=true];
+  string owner = 8 [deprecated=true];
+  string runtime_environment = 9;
+}
+
+message Node {
+  string uuid = 1;
+  oneof node {
+    Task task = 2;
+    DataSource data_source = 3;
+    Action action = 8;
+  }
+  Runtime runtime = 4;
+  Resources resources = 5 [deprecated = true];
+  UIData ui_data = 6;
+  NodeRuntimeEnvironment node_runtime_environment = 7;
+}
+
+message NodeRuntimeEnvironment {
+  string runtime_environment = 1;
+  map<string, common.RuntimeEnvironmentRef> input_runtime_environments = 2;
+  map<string, common.RuntimeEnvironmentRef> output_runtime_environments = 3;
+  string spark_config = 4;
+}
+
+message Edge {
+  string src_uuid = 1;
+  string src_output_id = 2;
+
+  string dst_uuid = 3;
+  string dst_input_id = 4;
+}
+
+message DataSource {
+  enum DataSourceState {
+    DATA_SOURCE_STATE_INVALID = 0;
+    DATA_SOURCE_STATE_ACTIVE = 1;
+    DATA_SOURCE_STATE_DISABLED = 2;
+    DATA_SOURCE_STATE_EXPIRED = 3;
+  }
+  string uuid = 1;
+  string source_uuid = 2;
+  string name = 3;
+  repeated DataIO outputs = 4;
+  string description = 5;
+  repeated string tags = 6;
+  google.protobuf.Timestamp created_at = 7;
+  string owner = 8;
+  DataSourceState state = 9;
+  google.protobuf.Timestamp updated_at = 10;
+  string parent_experiment_uuid = 11;
+}
+
+message Action {
+  ActionKind kind = 1;
+  repeated DataIO inputs = 2;
+  repeated DataIO outputs = 3;
+  Runtime default_runtime = 4;
+  string description = 5;
+}
+
+enum ActionKind {
+  ACTION_INVALID = 0;
+  PROMOTE_TO_MODEL = 1;
+  PROMOTE_TO_DATA_SOURCE = 2;
+}
+
+enum Type {
+  option deprecated = true;
+  INVALID = 0;
+  MODEL = 1;
+  STATIC_DATA = 2;
+}
+
+message DataIO {
+  message DataTypeHint {
+    option deprecated = true;
+    enum OSKind {
+      OS_KIND_INVALID = 0;
+      OS_KIND_FILE = 1;
+      OS_KIND_DIR = 2;
+    }
+    enum DataKind {
+      DATA_KIND_INVALID = 0;
+      DATA_KIND_BINARY = 1;
+      DATA_KIND_TEXT = 2;
+      DATA_KIND_STRUCTURED_TEXT = 3;
+      DATA_KIND_IMAGE = 4;
+      DATA_KIND_AUDIO = 5;
+    }
+    OSKind os_kind = 1;
+    DataKind data_kind = 2;
+  }
+  string id = 1;
+  string name = 2;
+  Type type = 3 [deprecated = true];
+  DataTypeHint data_type_hint = 4 [deprecated = true];
+  common.DataHint data_hint = 5;
+  common.DataKind data_kind = 6;
+}
+
+message Task {
+  enum TaskState {
+    TASK_STATE_INVALID = 0;
+    TASK_STATE_ACTIVE = 1;
+    TASK_STATE_DEPRECATED = 2;
+    TASK_STATE_DISABLED = 3;
+  }
+  string uuid = 1;
+  string name = 2;
+
+  oneof task {
+    PythonScript python_script = 3;
+    Executable executable = 4;
+    Container container = 5;
+    SparkJob spark_job = 20;
+    SQL sql = 21;
+  }
+  reserved 6;
+
+  repeated DataIO inputs = 7;
+  repeated DataIO outputs = 8;
+
+  bool nondeterministic = 9;
+
+  string description = 10;
+  string version = 11;
+  Runtime default_runtime = 12;
+  repeated string tags = 13;
+  google.protobuf.Timestamp created_at = 14;
+  reserved 15; // used to be Resources default_resources, but moved it to Runtime
+
+  google.protobuf.Timestamp updated_at = 16;
+  string parent_uuid = 17;
+  TaskState state = 18;
+  string owner = 19;
+}
+
+message Runtime {
+  map<string, string> parameters = 1;
+  oneof task_runtime {
+    PythonScriptRuntime python_script_runtime = 2;
+    ContainerRuntime container_runtime = 5;
+    SparkJobRuntime spark_job_runtime = 6;
+    SQLRuntime sql_runtime = 9;
+  }
+  reserved 10 to 20; // reserved for task-specific runtimes
+  map<string, string> environment_variables = 3 [deprecated = true];
+  Resources resources = 4 [deprecated = true]; // use advanced_resources instead
+  map<string, common.EnvValue> new_environment_variables = 7;
+  repeated common.ConfigSetRef config_sets = 8;
+  AdvancedResources advanced_resources = 21;
+}
+
+message AdvancedResources {
+  string named_resources_used = 1;
+  common.Resources typed_resources = 2;
+}
+
+message Resources {
+  string cpu = 1;
+  string mem = 2;
+  string gpu = 3;
+  string gpu_mem = 4;
+}
+
+message PythonScript {
+  string source_uuid = 1;
+  reserved 2,3; // used to be docker image & command;
+  string source_name = 4;
+}
+
+message PythonScriptRuntime {
+  string docker_image = 1;
+  string command = 2;
+}
+
+message ContainerRuntime {
+  string docker_image = 1;
+  string command = 2;
+}
+
+message SQLRuntime {
+  bool no_header = 1;
+}
+
+message SparkJob {
+  string source_uuid = 1;
+  string source_name = 2;
+}
+
+message SparkJobRuntime {
+  enum LogLevel {
+    // log4j log levels
+    INVALID = 0;
+    ALL = 1;
+    TRACE = 2;
+    DEBUG = 3;
+    INFO = 4;
+    WARN = 5;
+    ERROR = 6;
+    FATAL = 7;
+    OFF = 8;
+  }
+  message SparkJobYarnRuntime {}
+  message SparkJobK8SRuntime {
+    string container_image = 1;
+    string executor_image = 2;
+
+    Resources driver_resources = 3;
+    Resources executor_resources = 4;
+  }
+
+  oneof runtime {
+    SparkJobYarnRuntime yarn_runtime = 1;
+    SparkJobK8SRuntime k8s_runtime = 2;
+  }
+  reserved 3;
+  repeated string packages = 4;
+  uint32 executor_instances = 5;
+  reserved 6 to 9;
+  string extra_args = 10;
+  LogLevel log_level = 11;
+  string main_app_file = 12;
+  string app_arguments = 13;
+}
+
+message Executable {
+  // TODO(#1): todo
+}
+
+message Container {
+}
+
+message SQL {
+  string source_uuid = 1;
+  string source_name = 2;
+}
+
+//
+//   SUBMITTED -> QUEUEING -> PREPARING -> RUNNING -> FINALIZING -> DONE
+//           |           |            |          |             |
+//           |           |            ----------------------------> FAILED
+//           |           |            |          |             |
+//           -----------------------------------------------------> CANCELED
+//                                    |
+//                                    ----------------------------> ALREADY_DONE
+//
+enum NodeState {
+  NODE_STATE_INVALID = 0;
+  NODE_STATE_SUBMITTED = 1;
+  NODE_STATE_QUEUEING = 2;
+  NODE_STATE_CANCELED = 3;
+  NODE_STATE_PREPARING = 4;
+  NODE_STATE_RUNNING = 5;
+  NODE_STATE_FINALIZING = 6;
+  NODE_STATE_DONE = 7;
+  NODE_STATE_ALREADY_DONE = 8;
+  NODE_STATE_FAILED = 9;
+}
+
+enum ExperimentState {
+  EXPERIMENT_STATE_INVALID = 0;
+  EXPERIMENT_STATE_SUBMITTED = 1;
+  EXPERIMENT_STATE_RUNNING = 2;
+  EXPERIMENT_STATE_DONE = 3;
+  EXPERIMENT_STATE_FAILED = 4;
+  EXPERIMENT_STATE_PARTIALLY_FAILED = 5;
+}
+
+message ExperimentStatus {
+  string workflow_uuid = 1 [deprecated=true];
+  string experiment_uuid = 2;
+  ExperimentState state = 3;
+  repeated NodeStatus node_statuses = 4;
+
+  google.protobuf.Timestamp update_timestamp = 5;
+
+  string owner = 6;
+}
+
+message NodeStatus {
+  string node_uuid = 1;
+  string experiment_uuid = 8;
+  NodeState state = 2;
+  string task_hash = 3 [deprecated=true];
+  google.protobuf.Timestamp started_at = 4;
+  google.protobuf.Timestamp finished_at = 5;
+  oneof status {
+    TaskStatus task_status = 6;
+    ActionStatus action_status = 7;
+  }
+}
+
+message NodeStatusRecord {
+  string node_uuid = 1;
+  NodeState state = 2;
+  google.protobuf.Timestamp since = 3;
+  google.protobuf.Timestamp until = 4;
+}
+
+message NodeStatuses {
+  repeated NodeStatus node_statuses = 1;
+}
+
+message TaskStatus {
+  string task_hash = 1;
+  google.protobuf.Timestamp started_at = 4;
+  google.protobuf.Timestamp finished_at = 5;
+}
+
+message ActionStatus {
+  message PromoteToDataSourceStatus {
+    string data_source_uuid = 1;
+  }
+  message PromoteToModelStatus {
+    string model_uuid = 1;
+  }
+  oneof status {
+    PromoteToDataSourceStatus promote_to_data_source_status = 1;
+    PromoteToModelStatus promote_to_model_status = 2;
+  }
+}
+
+message ExperimentEvent {
+  google.protobuf.Timestamp timestamp = 1;
+  string workflow_uuid = 2 [deprecated=true];
+  string experiment_uuid = 3;
+
+  message ExperimentStatusEvent {
+    ExperimentStatus status = 1;
+  }
+
+  message NodeStatusEvent {
+    string node_uuid = 1;
+    NodeStatus status = 2;
+  }
+
+  oneof event {
+    ExperimentStatusEvent experiment_status_event = 5;
+    NodeStatusEvent node_status_event = 6;
+  }
+}
+
+message Artifact {
+  enum ArtifactState {
+    ARTIFACT_STATE_INVALID = 0;
+    ARTIFACT_STATE_CREATED = 1;
+    ARTIFACT_STATE_READY = 2;
+    ARTIFACT_STATE_TASK_FAILED = 3;
+  }
+  string task_hash = 1;
+  string output_id = 2;
+  string object_uuid = 3;
+  google.protobuf.Timestamp created_at = 4;
+  ArtifactState state = 5;
+  string node_uuid = 6;
+  string experiment_uuid = 7;
+}
+
+message Model {
+  string uuid = 1;
+  string name = 2;
+  string object_uuid = 3;
+  string experiment_uuid = 4;
+  string node_uuid = 5;
+  string owner = 6;
+  google.protobuf.Timestamp created_at = 7;
+  repeated string tags = 8;
+}
+
+message WorkflowTemplate {
+  message Parameters {
+    map<string, string> parameters = 1;
+  }
+  string uuid = 1;
+  Workflow workflow = 2; // might have unevaluated parameters
+  Parameters parameters = 3;
+
+  google.protobuf.Timestamp created_at = 4;
+  string parent_experiment_uuid = 5;
+}
+
+message Experiment {
+  string uuid = 1;
+  Workflow workflow = 2; // workflow with all parameters evaluated
+  string template_uuid = 3;
+  WorkflowTemplate.Parameters evaluated_parameters = 4;
+  google.protobuf.Timestamp created_at = 5;
+  google.protobuf.Timestamp updated_at = 6;
+  ExperimentState state = 7;
+  repeated NodeStatus node_statuses = 8;
+  string submitted_by = 9;
+  string name = 10;
+  repeated string tags = 11;
+  map<string, WorkflowTemplate.Parameters> evaluated_nodes_parameters = 12;
+}
+
+message RecurringExperiment {
+  enum RecurringExperimentState {
+    RECURRING_EXPERIMENT_STATE_INVALID = 0;
+    RECURRING_EXPERIMENT_STATE_ACTIVE = 1;
+    RECURRING_EXPERIMENT_STATE_INACTIVE = 2;
+  }
+  string uuid = 1;
+  string name = 2;
+  string template_uuid = 3;
+  string cron_expression = 4;
+  google.protobuf.Timestamp created_at = 5;
+  google.protobuf.Timestamp updated_at = 6;
+  string owner = 7;
+  repeated string tags = 8;
+  RecurringExperimentState state = 9;
+}
+
+message Draft {
+  string uuid = 1;
+  string name = 2;
+  string owner = 3;
+  string parent_experiment_uuid = 4;
+  WorkflowTemplate template = 5;
+  google.protobuf.Timestamp created_at = 6;
+  google.protobuf.Timestamp updated_at = 7;
+  repeated string tags = 8;
+}
+
+enum ServiceState {
+  SERVICE_STATE_INVALID = 0;
+  SERVICE_STATE_READY = 1;
+  SERVICE_STATE_RUNNING = 2;
+  SERVICE_STATE_PAUSED = 3;
+  SERVICE_STATE_FINISHED = 4;
+  SERVICE_STATE_FAILED = 5;
+  SERVICE_STATE_PREPARING = 6;
+}
+
+message ServiceStatus {
+  ServiceState state = 1;
+  repeated string addresses = 2;
+}
+
+message ServiceDefinition {
+  ServiceContainerDefinition service_container_definition = 1;
+  reserved 2;
+  Resources resources = 3;
+  ServiceRuntimeEnvironment service_runtime_environment = 4;
+  repeated ServiceObjectMount object_mounts = 5;
+}
+
+message ServiceObjectMount {
+  string uuid = 1;
+  string mount_path = 2;
+}
+
+message Service {
+  string uuid = 1;
+  string owner = 2;
+  ServiceDefinition service_definition = 3;
+
+  ServiceStatus status = 4;
+
+  google.protobuf.Timestamp created_at = 5;
+  google.protobuf.Timestamp updated_at = 6;
+}
+
+message ServiceRuntimeEnvironment {
+  string runtime_environment = 1;
+  map<string, common.RuntimeEnvironmentRef> objects_runtime_environments = 2;
+  string spark_config = 4;
+}
+
+message ServiceContainerDefinition {
+  string name = 1;
+  string image = 2;
+  repeated string command = 3;
+  repeated string args = 4;
+  repeated ServiceVolume volumes = 5;
+  repeated Endpoint endpoints = 6;
+  map<string, string> parameters = 7;
+}
+
+message ServiceVolume {
+  string mount_path = 1;
+  bool read_only = 2;
+
+  // filled when submitting
+  string uuid = 3;
+}
+
+message Endpoint {
+  int32 port = 1;
+  string name = 2;
+  string default_url = 3;
+}
+
+message TaskExtension {
+  string name = 1;
+  repeated DataIO additional_inputs = 2;
+  repeated DataIO additional_outputs = 3;
+  map<string, common.EnvValue> additional_environment_variables = 4;
+  map<string, string> additional_parameters = 5;
+
+  map<string, common.RuntimeEnvironmentRef> input_runtime_environments = 6;
+  map<string, common.RuntimeEnvironmentRef> output_runtime_environments = 7;
+}

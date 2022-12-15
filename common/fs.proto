@@ -1,0 +1,21 @@
+syntax = "proto3";
+package common;
+option go_package = "github.com/impeccableai/impeccable/proto/common";
+
+message Entry {
+  oneof entry {
+    Dir dir = 1;
+    File file = 2;
+  }
+}
+
+message Dir {
+  string name = 1;
+  repeated Entry entries = 2;
+  int64 size = 3;
+}
+
+message File {
+  string name = 1;
+  int64 size = 2;
+}

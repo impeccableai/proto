@@ -1,0 +1,44 @@
+syntax = "proto3";
+package common;
+option go_package = "github.com/impeccableai/impeccable/proto/common";
+
+import "proto/common/data.proto";
+import "google/protobuf/timestamp.proto";
+
+message EnvValue {
+  oneof value {
+    string raw = 1;
+    SecretRef secret_ref = 2;
+  }
+}
+
+message ConfigSet {
+  string uuid = 1;
+  string name = 2;
+  map<string, EnvValue> environment_variables = 3;
+  google.protobuf.Timestamp created_at = 4;
+  //  map<string, MountValue> extra_mounts = 5;
+}
+
+message SecretRef {
+  string secret_name = 1;
+  string key = 2;
+}
+
+message ConfigSetRef {
+  string uuid = 1;
+}
+
+message RuntimeEnvironmentRef {
+  string name = 1;
+}
+
+message ObjectRef {
+  string uuid = 1;
+  string store = 2;
+}
+
+message ExtendedObjectRef {
+  ObjectRef object_ref = 1;
+  common.DataKind data_kind = 2;
+}
