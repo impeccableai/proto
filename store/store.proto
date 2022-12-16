@@ -1,0 +1,426 @@
+syntax = "proto3";
+package store;
+option go_package = "github.com/impeccableai/impeccable/proto/store";
+
+import "google/protobuf/timestamp.proto";
+import "proto/workflow/workflow.proto";
+import "proto/common/request_options.proto";
+import "proto/features/features.proto";
+
+message GetTaskRequest {
+  string uuid = 1;
+  // returns ancestors only
+  bool resolve_tree = 2;
+  bool fill_features = 3;
+  // returns every task which shares common ancestor
+  bool resolve_family = 4;
+}
+
+message GetTaskResponse {
+  workflow.Task task = 1;
+  repeated workflow.Task tree = 3;
+  features.TaskFeatures features = 4;
+  repeated workflow.Task family = 5;
+}
+
+message GetTasksRequest {
+  message GetTasksRequestOptions {
+    common.PaginationOptions pagination_options = 1;
+
+    repeated common.Filter uuid = 2;
+    repeated common.Filter name = 3;
+    repeated common.Filter state = 5;
+
+    string order_by = 4;
+  }
+
+  GetTasksRequestOptions options = 1;
+  bool resolve_trees = 2;
+  bool fill_features = 3;
+}
+
+message GetTasksResponse {
+  message Tasks {
+    repeated workflow.Task tasks = 1;
+  }
+  repeated workflow.Task tasks = 1;
+  common.PaginationResponse pagination_response = 2;
+  map<string, Tasks> trees = 3;
+  map<string, features.TaskFeatures> tasks_features = 4; // uuid => TaskFeatures
+}
+
+message CreateTaskRequest {
+  workflow.Task task = 1;
+  workflow.Task.TaskState parent_task_state = 2;
+}
+message CreateTaskResponse {
+  workflow.Task task = 1;
+}
+
+message SetTaskStateRequest {
+  string task_uuid = 1;
+  workflow.Task.TaskState state = 2;
+}
+message SetTaskStateResponse {
+}
+
+message GetDataSourcesRequest {
+  message GetDataSourcesRequestOptions {
+    common.PaginationOptions pagination_options = 1;
+
+    repeated common.Filter uuid = 2;
+    repeated common.Filter name = 3;
+    repeated common.Filter state = 5;
+    repeated common.Filter source_uuid = 6;
+
+    string order_by = 4;
+  }
+  GetDataSourcesRequestOptions options = 1;
+}
+
+message GetDataSourcesResponse {
+  repeated workflow.DataSource data_sources = 1;
+  common.PaginationResponse pagination_response = 2;
+}
+
+message GetDataSourceRequest {
+  string uuid = 1;
+}
+
+message GetDataSourceResponse {
+  workflow.DataSource data_source = 1;
+}
+
+message CreateDataSourceRequest {
+  workflow.DataSource data_source = 1;
+  string store = 2;
+}
+message CreateDataSourceResponse {
+  workflow.DataSource data_source = 1;
+}
+
+message GetActionsRequest {
+  message GetDataSourcesRequestOptions {
+    common.PaginationOptions pagination_options = 1;
+
+    repeated common.Filter kind = 2;
+  }
+}
+
+message GetActionsResponse {
+  repeated workflow.Action actions = 1;
+}
+
+message GetExtensionsRequest {}
+
+message GetExtensionsResponse {
+  repeated workflow.TaskExtension extensions = 1;
+}
+
+message GetServiceContainerDefinitionsRequest {}
+
+message GetServiceContainerDefinitionsResponse {
+  repeated workflow.ServiceContainerDefinition service_container_definitions = 1;
+}
+
+message GetServicesRequest {
+  message GetServicesRequestOptions {
+    common.PaginationOptions pagination_options = 1;
+
+    repeated common.Filter uuid = 2;
+    repeated common.Filter name = 3;
+    repeated common.Filter owner = 4;
+    repeated common.Filter state = 5;
+
+    string order_by = 6;
+  }
+  GetServicesRequestOptions options = 1;
+}
+
+message GetServicesResponse {
+  repeated workflow.Service services = 1;
+}
+
+message GetServiceStatusesRequest {
+  bool with_services = 1;
+  bool all = 2;
+}
+
+message GetServiceStatusesResponse {
+  repeated workflow.ServiceStatus statuses = 1;
+  repeated workflow.Service services = 2;
+}
+
+message GetWorkflowsRequest {
+  message GetWorkflowsRequestOptions {
+    common.PaginationOptions pagination_options = 1;
+
+    repeated common.Filter uuid = 2;
+    repeated common.Filter name = 3;
+
+    string order_by = 4;
+  }
+  GetWorkflowsRequestOptions options = 1;
+}
+
+message GetWorkflowRequest {
+  string uuid = 1;
+}
+
+message GetWorkflowResponse {
+  workflow.Workflow workflow = 1;
+}
+
+message GetWorkflowsResponse {
+  repeated workflow.Workflow workflows = 1;
+  common.PaginationResponse pagination_response = 2;
+}
+
+message CreateWorkflowRequest {
+  workflow.Workflow workflow = 1;
+}
+message CreateWorkflowResponse {
+  workflow.Workflow workflow = 1;
+}
+
+message GetDraftsRequest {
+  message GetDraftsRequestOptions {
+    common.PaginationOptions pagination_options = 1;
+
+    repeated common.Filter uuid = 2;
+    repeated common.Filter name = 3;
+    repeated common.Filter owner = 5;
+
+    string order_by = 4;
+  }
+  GetDraftsRequestOptions options = 1;
+}
+
+message GetDraftRequest {
+  string uuid = 1;
+  bool fill_parent_experiment = 2;
+}
+
+message GetDraftResponse {
+  workflow.Draft draft = 1;
+  workflow.Experiment parent_experiment = 2;
+}
+
+message DeleteDraftRequest {
+  string uuid = 1;
+}
+
+message DeleteDraftResponse {
+}
+
+message GetDraftsResponse {
+  repeated workflow.Draft drafts = 1;
+  common.PaginationResponse pagination_response = 2;
+}
+
+message SaveDraftRequest {
+  workflow.Draft draft = 1;
+}
+
+message SaveDraftResponse {
+  workflow.Draft draft = 1;
+}
+
+message GetExperimentsRequest {
+  // filter
+  string workflow_id = 1;
+  message GetExperimentsRequestOptions {
+    common.PaginationOptions pagination_options = 1;
+
+    repeated common.Filter uuid = 2;
+    repeated common.Filter name = 3;
+    repeated common.Filter submitted_by = 6;
+
+    string order_by = 4;
+    bool fill_workflow = 5;
+  }
+  GetExperimentsRequestOptions options = 2;
+}
+
+message GetExperimentsResponse {
+  repeated workflow.Experiment experiments = 1;
+  common.PaginationResponse pagination_response = 2;
+}
+
+message GetExperimentRequest {
+  string experiment_uuid = 1;
+  bool fill_artifacts = 2;
+  bool fill_template = 3;
+}
+
+message GetExperimentResponse {
+  workflow.ExperimentStatus experiment_status = 1;
+  repeated workflow.Artifact artifacts = 2;
+  workflow.Experiment experiment = 3;
+  workflow.WorkflowTemplate template = 4;
+}
+
+message SaveExperimentRequest {
+  workflow.Experiment experiment = 1;
+}
+
+message SaveExperimentResponse {
+  workflow.Experiment experiment = 1;
+}
+
+message UpdateExperimentRequest {
+  workflow.Experiment experiment = 1;
+}
+
+message UpdateExperimentResponse {
+  workflow.Experiment experiment = 1;
+}
+
+message GetArtifactsRequest {
+  // filter
+  string experiment_id = 1;
+  message GetArtifactsRequestOptions {
+    common.PaginationOptions pagination_options = 1;
+
+    repeated common.Filter uuid = 2;
+    repeated common.Filter task_hash = 3;
+    repeated common.Filter output_id = 4;
+    repeated common.Filter state = 5;
+    repeated common.Filter experiment_uuid = 6;
+    repeated common.Filter node_uuid = 7;
+  }
+  GetArtifactsRequestOptions options = 2;
+}
+
+message GetWorkflowTemplateRequest {
+  string uuid = 1;
+}
+
+message GetWorkflowTemplateResponse {
+  workflow.WorkflowTemplate template = 1;
+}
+
+message SaveWorkflowTemplateRequest {
+  workflow.WorkflowTemplate template = 1;
+}
+
+message SaveWorkflowTemplateResponse {
+  workflow.WorkflowTemplate template = 1;
+}
+
+message CreateRecurringExperimentRequest {
+  workflow.RecurringExperiment experiment = 1;
+}
+
+message GetRecurringExperimentRequest {
+  string uuid = 1;
+}
+
+message GetRecurringExperimentsRequest {
+  message GetRecurringExperimentsRequestOptions {
+    common.PaginationOptions pagination_options = 1;
+
+    string order_by = 2;
+
+    repeated common.Filter uuid = 3;
+    repeated common.Filter state = 4;
+    repeated common.Filter owner = 5;
+  }
+  GetRecurringExperimentsRequestOptions options = 1;
+}
+
+message UpdateRecurringExperimentRequest {
+  workflow.RecurringExperiment experiment = 1;
+}
+
+message DeleteRecurringExperimentRequest {
+  string uuid = 1;
+}
+
+message CreateRecurringExperimentResponse {
+  workflow.RecurringExperiment experiment = 1;
+}
+message GetRecurringExperimentResponse {
+  workflow.RecurringExperiment experiment = 1;
+}
+message GetRecurringExperimentsResponse {
+  repeated workflow.RecurringExperiment recurring_experiments = 1;
+  common.PaginationResponse pagination_response = 2;
+}
+message UpdateRecurringExperimentResponse {
+  workflow.RecurringExperiment experiment = 1;
+}
+
+message DeleteRecurringExperimentResponse {}
+
+message GetExperimentLastSubmissionTimeRequest {
+  string submitted_by = 1;
+}
+
+message GetExperimentLastSubmissionTimeResponse {
+  google.protobuf.Timestamp timestamp = 1;
+}
+
+message GetModelsRequest {
+  message GetModelsRequestOptions {
+    common.PaginationOptions pagination_options = 1;
+
+    repeated common.Filter uuid = 2;
+    repeated common.Filter name = 3;
+    repeated common.Filter object_uuid = 4;
+    repeated common.Filter experiment_uuid = 5;
+    repeated common.Filter node_uuid = 6;
+    repeated common.Filter owner = 7;
+
+    string order_by = 8;
+  }
+  GetModelsRequestOptions options = 1;
+}
+
+message GetModelsResponse {
+  repeated workflow.Model models = 1;
+  common.PaginationResponse pagination_response = 2;
+}
+
+service Store {
+  rpc GetTasks(GetTasksRequest) returns (GetTasksResponse);
+  rpc GetTask(GetTaskRequest) returns (GetTaskResponse);
+  rpc CreateTask(CreateTaskRequest) returns (CreateTaskResponse);
+  rpc SetTaskState(SetTaskStateRequest) returns (SetTaskStateResponse);
+
+  rpc GetDataSources(GetDataSourcesRequest) returns (GetDataSourcesResponse);
+  rpc GetDataSource(GetDataSourceRequest) returns (GetDataSourceResponse);
+  rpc CreateDataSource(CreateDataSourceRequest) returns (CreateDataSourceResponse);
+
+  rpc GetActions(GetActionsRequest) returns (GetActionsResponse);
+//  rpc GetAction(GetActionRequest) returns (GetActionResponse);
+
+  rpc GetExtensions(GetExtensionsRequest) returns (GetExtensionsResponse);
+
+  rpc GetServiceContainerDefinitions(GetServiceContainerDefinitionsRequest) returns (GetServiceContainerDefinitionsResponse);
+
+  rpc GetServices(GetServicesRequest) returns (GetServicesResponse);
+  rpc GetServiceStatuses(GetServiceStatusesRequest) returns (GetServiceStatusesResponse);
+
+  rpc GetDrafts(GetDraftsRequest) returns (GetDraftsResponse);
+  rpc GetDraft(GetDraftRequest) returns (GetDraftResponse);
+  rpc SaveDraft(SaveDraftRequest) returns (SaveDraftResponse);
+  rpc DeleteDraft(DeleteDraftRequest) returns (DeleteDraftResponse);
+
+  rpc GetExperiment(GetExperimentRequest) returns (GetExperimentResponse);
+  rpc GetExperimentLastSubmissionTime(GetExperimentLastSubmissionTimeRequest) returns (GetExperimentLastSubmissionTimeResponse);
+  rpc GetExperiments(GetExperimentsRequest) returns (GetExperimentsResponse);
+  rpc SaveExperiment(SaveExperimentRequest) returns (SaveExperimentResponse);
+  rpc UpdateExperiment(UpdateExperimentRequest) returns (UpdateExperimentResponse);
+
+  rpc GetWorkflowTemplate(GetWorkflowTemplateRequest) returns (GetWorkflowTemplateResponse);
+  rpc SaveWorkflowTemplate(SaveWorkflowTemplateRequest) returns (SaveWorkflowTemplateResponse);
+
+  rpc CreateRecurringExperiment(CreateRecurringExperimentRequest) returns (CreateRecurringExperimentResponse);
+  rpc GetRecurringExperiment(GetRecurringExperimentRequest) returns (GetRecurringExperimentResponse);
+  rpc GetRecurringExperiments(GetRecurringExperimentsRequest) returns (GetRecurringExperimentsResponse);
+  rpc UpdateRecurringExperiment(UpdateRecurringExperimentRequest) returns (UpdateRecurringExperimentResponse);
+  rpc DeleteRecurringExperiment(DeleteRecurringExperimentRequest) returns (DeleteRecurringExperimentResponse);
+
+  rpc GetModels(GetModelsRequest) returns (GetModelsResponse);
+}

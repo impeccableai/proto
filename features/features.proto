@@ -1,0 +1,24 @@
+syntax = "proto3";
+package features;
+option go_package = "github.com/impeccableai/impeccable/proto/features";
+
+message TaskFeatures {
+  enum Feature {
+    TASK_FEATURE_INVALID = 0;
+    TASK_FEATURE_USAGE_COUNT = 1;
+    TASK_FEATURE_SUCCESS_RATE = 2;
+    TASK_FEATURE_LAST_USED = 3;
+    // more features will be defined here
+  }
+  map<int32, float> float_features = 1;
+}
+
+message DataSourceFeatures {
+  enum Feature {
+    DATA_SOURCE_FEATURE_INVALID = 0;
+    DATA_SOURCE_FEATURE_USAGE_COUNT = 1;
+    DATA_SOURCE_FEATURE_LAST_USED = 2;
+    // more features will be defined here
+  }
+  map<int32, float> float_features = 1;
+}
