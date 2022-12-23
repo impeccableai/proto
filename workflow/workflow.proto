@@ -400,6 +400,15 @@ message WorkflowTemplate {
   string parent_experiment_uuid = 5;
 }
 
+message NamedWorkflowTemplate {
+  string uuid = 1;
+  string template_uuid = 2;
+  string name = 3;
+  string version = 4;
+
+  google.protobuf.Timestamp created_at = 5;
+}
+
 message Experiment {
   string uuid = 1;
   Workflow workflow = 2; // workflow with all parameters evaluated
