@@ -405,6 +405,7 @@ message NamedWorkflowTemplate {
   string template_uuid = 2;
   string name = 3;
   string version = 4;
+  string owner = 6;
 
   google.protobuf.Timestamp created_at = 5;
 }

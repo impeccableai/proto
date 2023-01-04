@@ -405,6 +405,25 @@ message GetNamedWorkflowTemplateResponse {
   workflow.NamedWorkflowTemplate template = 1;
 }
 
+message GetNamedWorkflowTemplatesRequest {
+  message GetNamedWorkflowTemplatesRequestOptions {
+    common.PaginationOptions pagination_options = 1;
+
+    repeated common.Filter uuid = 2;
+    repeated common.Filter name = 3;
+    repeated common.Filter version = 6;
+    repeated common.Filter owner = 7;
+
+    string order_by = 4;
+  }
+  GetNamedWorkflowTemplatesRequestOptions options = 1;
+}
+
+message GetNamedWorkflowTemplatesResponse {
+  repeated workflow.NamedWorkflowTemplate named_workflow_templates = 1;
+  common.PaginationResponse pagination_response = 2;
+}
+
 service Store {
   rpc GetTasks(GetTasksRequest) returns (GetTasksResponse);
   rpc GetTask(GetTaskRequest) returns (GetTaskResponse);
@@ -441,6 +460,7 @@ service Store {
 
   rpc CreateNamedWorkflowTemplate(CreateNamedWorkflowTemplateRequest) returns (CreateNamedWorkflowTemplateResponse);
   rpc GetNamedWorkflowTemplate(GetNamedWorkflowTemplateRequest) returns (GetNamedWorkflowTemplateResponse);
+  rpc GetNamedWorkflowTemplates(GetNamedWorkflowTemplatesRequest) returns (GetNamedWorkflowTemplatesResponse);
 
   rpc CreateRecurringExperiment(CreateRecurringExperimentRequest) returns (CreateRecurringExperimentResponse);
   rpc GetRecurringExperiment(GetRecurringExperimentRequest) returns (GetRecurringExperimentResponse);
