@@ -254,7 +254,7 @@ message GetExperimentRequest {
 }
 
 message GetExperimentResponse {
-  workflow.ExperimentStatus experiment_status = 1;
+  workflow.ExperimentStatus experiment_status = 1 [deprecated = true];
   repeated workflow.Artifact artifacts = 2;
   workflow.Experiment experiment = 3;
   workflow.WorkflowTemplate template = 4;
