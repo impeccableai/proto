@@ -5,6 +5,7 @@ option go_package = "github.com/impeccableai/impeccable/proto/axii";
 import "proto/workflow/workflow.proto";
 import "proto/system/secrets.proto";
 import "proto/common/entities.proto";
+import "proto/store/store.proto";
 
 message CreateWorkflowAndRunRequest {
   workflow.Workflow workflow = 1;
@@ -94,15 +95,11 @@ message ImportDraftRequest {
   repeated common.ConfigSet config_sets = 3;
   repeated workflow.Task tasks = 4;
   reserved 5 to 19;
-  string template_name = 20;
-  string template_version = 21;
-  bool save_draft = 22;
-  string secret_encryption_key = 23;
+  string secret_encryption_key = 20;
 }
 
 message ImportDraftResponse {
-  string named_workflow_template_uuid = 1;
-  string draft_uuid = 2;
+  string draft_uuid = 1;
 }
 
 message ExportDraftRequest {
@@ -111,6 +108,32 @@ message ExportDraftRequest {
 }
 
 message ExportDraftResponse {
+  string object_uuid = 1;
+}
+
+message ImportNamedWorkflowTemplateRequest {
+  workflow.NamedWorkflowTemplate named_workflow_template = 1;
+  workflow.WorkflowTemplate workflow_template = 2;
+  repeated system.Secret secrets = 3;
+  repeated common.ConfigSet config_sets = 4;
+  repeated workflow.Task tasks = 5;
+  reserved 6 to 19;
+  string secret_encryption_key = 20;
+}
+
+message ImportNamedWorkflowTemplateResponse {
+  string named_workflow_template_uuid = 1;
+}
+
+message ExportNamedWorkflowTemplateRequest {
+  oneof id {
+    string uuid = 1;
+    store.GetNamedWorkflowTemplateRequest.NameVersion name = 2;
+  }
+  string secret_encryption_key = 3;
+}
+
+message ExportNamedWorkflowTemplateResponse {
   string object_uuid = 1;
 }
 
@@ -140,5 +163,8 @@ service Axii {
 
   rpc ImportDraft(ImportDraftRequest) returns (ImportDraftResponse);
   rpc ExportDraft(ExportDraftRequest) returns (ExportDraftResponse);
+
+  rpc ImportNamedWorkflowTemplate(ImportNamedWorkflowTemplateRequest) returns (ImportNamedWorkflowTemplateResponse);
+  rpc ExportNamedWorkflowTemplate(ExportNamedWorkflowTemplateRequest) returns (ExportNamedWorkflowTemplateResponse);
   rpc SubmitNamedWorkflowTemplate(SubmitNamedWorkflowTemplateRequest) returns (SubmitNamedWorkflowTemplateResponse);
 }

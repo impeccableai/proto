@@ -1,0 +1,10 @@
+syntax = "proto3";
+package common;
+option go_package = "github.com/impeccableai/impeccable/proto/common";
+
+message RefreshRequest {}
+message RefreshResponse {}
+
+service Refresher {
+  rpc Refresh(RefreshRequest) returns (RefreshResponse);
+}
