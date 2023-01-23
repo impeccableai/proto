@@ -124,6 +124,7 @@ message Task {
     TASK_STATE_ACTIVE = 1;
     TASK_STATE_DEPRECATED = 2;
     TASK_STATE_DISABLED = 3;
+    TASK_STATE_WIP = 4;
   }
   string uuid = 1;
   string name = 2;

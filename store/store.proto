@@ -53,8 +53,24 @@ message CreateTaskRequest {
   workflow.Task task = 1;
   workflow.Task.TaskState parent_task_state = 2;
 }
+
 message CreateTaskResponse {
   workflow.Task task = 1;
+}
+
+message SaveTaskRequest {
+  workflow.Task task = 1;
+}
+
+message SaveTaskResponse {
+  workflow.Task task = 1;
+}
+
+message DeleteTaskRequest {
+  string uuid = 1;
+}
+
+message DeleteTaskResponse {
 }
 
 message SetTaskStateRequest {
@@ -429,7 +445,9 @@ service Store {
   rpc GetTasks(GetTasksRequest) returns (GetTasksResponse);
   rpc GetTask(GetTaskRequest) returns (GetTaskResponse);
   rpc CreateTask(CreateTaskRequest) returns (CreateTaskResponse);
+  rpc SaveTask(SaveTaskRequest) returns (SaveTaskResponse);
   rpc SetTaskState(SetTaskStateRequest) returns (SetTaskStateResponse);
+  rpc DeleteTask(DeleteTaskRequest) returns (DeleteTaskResponse);
 
   rpc GetDataSources(GetDataSourcesRequest) returns (GetDataSourcesResponse);
   rpc GetDataSource(GetDataSourceRequest) returns (GetDataSourceResponse);
