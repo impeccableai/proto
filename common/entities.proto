@@ -10,6 +10,12 @@ message EnvValue {
     string raw = 1;
     SecretRef secret_ref = 2;
   }
+  bool optional = 3;
+}
+
+message Parameter {
+  string value = 1;
+  bool optional = 2;
 }
 
 message ConfigSet {

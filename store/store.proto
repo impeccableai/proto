@@ -252,6 +252,7 @@ message GetExperimentsRequest {
     repeated common.Filter uuid = 2;
     repeated common.Filter name = 3;
     repeated common.Filter submitted_by = 6;
+    repeated common.Filter status = 7;
 
     string order_by = 4;
     bool fill_workflow = 5;

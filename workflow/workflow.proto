@@ -24,6 +24,7 @@ message Workflow {
 
 message Node {
   string uuid = 1;
+  // Only "uuid" is stored in Database for Tasks or DataSources and "kind" for Actions
   oneof node {
     Task task = 2;
     DataSource data_source = 3;
@@ -116,6 +117,8 @@ message DataIO {
   DataTypeHint data_type_hint = 4 [deprecated = true];
   common.DataHint data_hint = 5;
   common.DataKind data_kind = 6;
+  bool optional = 7;
+  bool multiple = 8;
 }
 
 message Task {
@@ -157,7 +160,7 @@ message Task {
 }
 
 message Runtime {
-  map<string, string> parameters = 1;
+  map<string, string> parameters = 1 [deprecated = true];
   oneof task_runtime {
     PythonScriptRuntime python_script_runtime = 2;
     ContainerRuntime container_runtime = 5;
@@ -170,6 +173,7 @@ message Runtime {
   map<string, common.EnvValue> new_environment_variables = 7;
   repeated common.ConfigSetRef config_sets = 8;
   AdvancedResources advanced_resources = 21;
+  map<string, common.Parameter> new_parameters = 22;
 }
 
 message AdvancedResources {

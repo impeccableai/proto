@@ -94,7 +94,8 @@ message ImportDraftRequest {
   repeated system.Secret secrets = 2;
   repeated common.ConfigSet config_sets = 3;
   repeated workflow.Task tasks = 4;
-  reserved 5 to 19;
+  repeated workflow.DataSource data_sources = 5;
+  reserved 6 to 19;
   string secret_encryption_key = 20;
 }
 
@@ -117,7 +118,8 @@ message ImportNamedWorkflowTemplateRequest {
   repeated system.Secret secrets = 3;
   repeated common.ConfigSet config_sets = 4;
   repeated workflow.Task tasks = 5;
-  reserved 6 to 19;
+  repeated workflow.DataSource data_sources = 6;
+  reserved 7 to 19;
   string secret_encryption_key = 20;
 }
 
@@ -147,6 +149,43 @@ message SubmitNamedWorkflowTemplateResponse {
   string experiment_uuid = 1;
 }
 
+message ImportTaskRequest {
+  workflow.Task task = 1;
+  repeated system.Secret secrets = 2;
+  repeated common.ConfigSet config_sets = 3;
+  reserved 4 to 19;
+  string secret_encryption_key = 20;
+}
+
+message ImportTaskResponse {
+  string task_uuid = 1;
+}
+
+message ExportTaskRequest {
+  string task_uuid = 1;
+  string secret_encryption_key = 2;
+}
+
+message ExportTaskResponse {
+  string object_uuid = 1;
+}
+
+message ImportDataSourceRequest {
+  workflow.DataSource data_source = 1;
+}
+
+message ImportDataSourceResponse {
+  string data_source_uuid = 1;
+}
+
+message ExportDataSourceRequest {
+  string data_source_uuid = 1;
+}
+
+message ExportDataSourceResponse {
+  string object_uuid = 1;
+}
+
 service Axii {
   rpc CloneExperiment(CloneExperimentRequest) returns (CloneExperimentResponse);
   rpc SubmitDraft(SubmitDraftRequest) returns (SubmitDraftResponse);
@@ -167,4 +206,10 @@ service Axii {
   rpc ImportNamedWorkflowTemplate(ImportNamedWorkflowTemplateRequest) returns (ImportNamedWorkflowTemplateResponse);
   rpc ExportNamedWorkflowTemplate(ExportNamedWorkflowTemplateRequest) returns (ExportNamedWorkflowTemplateResponse);
   rpc SubmitNamedWorkflowTemplate(SubmitNamedWorkflowTemplateRequest) returns (SubmitNamedWorkflowTemplateResponse);
+
+  rpc ImportTask(ImportTaskRequest) returns (ImportTaskResponse);
+  rpc ExportTask(ExportTaskRequest) returns (ExportTaskResponse);
+
+  rpc ImportDataSource(ImportDataSourceRequest) returns (ImportDataSourceResponse);
+  rpc ExportDataSource(ExportDataSourceRequest) returns (ExportDataSourceResponse);
 }
