@@ -69,6 +69,7 @@ message DataSource {
   DataSourceState state = 9;
   google.protobuf.Timestamp updated_at = 10;
   string parent_experiment_uuid = 11;
+
 }
 
 message Action {
@@ -197,11 +198,15 @@ message PythonScript {
 message PythonScriptRuntime {
   string docker_image = 1;
   string command = 2;
+  repeated string args = 3;
+  string work_dir = 4;
 }
 
 message ContainerRuntime {
   string docker_image = 1;
   string command = 2;
+  repeated string args = 3;
+  string work_dir = 4;
 }
 
 message SQLRuntime {

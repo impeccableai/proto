@@ -1,0 +1,15 @@
+syntax = "proto3";
+package common;
+option go_package = "github.com/impeccableai/impeccable/proto/common";
+
+message ValidationMessage {
+  enum ValidationMessageLevel {
+    INVALID = 0;
+    reserved 1 to 4;
+    ERROR = 5;
+    WARNING = 6;
+  }
+  string field = 1;
+  string description = 2;
+  ValidationMessageLevel level = 3;
+}

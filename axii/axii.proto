@@ -5,6 +5,7 @@ option go_package = "github.com/impeccableai/impeccable/proto/axii";
 import "proto/workflow/workflow.proto";
 import "proto/system/secrets.proto";
 import "proto/common/entities.proto";
+import "proto/common/validation.proto";
 import "proto/store/store.proto";
 
 message CreateWorkflowAndRunRequest {
@@ -186,6 +187,30 @@ message ExportDataSourceResponse {
   string object_uuid = 1;
 }
 
+message ValidateDraftRequest {
+  workflow.Draft draft = 1;
+}
+
+message ValidateDraftResponse {
+  repeated common.ValidationMessage messages = 1;
+}
+
+message ValidateTaskRequest {
+  workflow.Task task = 1;
+}
+
+message ValidateTaskResponse {
+  repeated common.ValidationMessage messages = 1;
+}
+
+message ValidateDataSourceRequest {
+  workflow.DataSource data_source = 1;
+}
+
+message ValidateDataSourceResponse {
+  repeated common.ValidationMessage messages = 1;
+}
+
 service Axii {
   rpc CloneExperiment(CloneExperimentRequest) returns (CloneExperimentResponse);
   rpc SubmitDraft(SubmitDraftRequest) returns (SubmitDraftResponse);
@@ -212,4 +237,8 @@ service Axii {
 
   rpc ImportDataSource(ImportDataSourceRequest) returns (ImportDataSourceResponse);
   rpc ExportDataSource(ExportDataSourceRequest) returns (ExportDataSourceResponse);
+
+  rpc ValidateDraft(ValidateDraftRequest) returns (ValidateDraftResponse);
+  rpc ValidateTask(ValidateTaskRequest) returns (ValidateTaskResponse);
+  rpc ValidateDataSource(ValidateDataSourceRequest) returns (ValidateDataSourceResponse);
 }
