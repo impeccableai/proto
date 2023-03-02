@@ -421,9 +421,6 @@ message NamedWorkflowTemplate {
 }
 
 message Experiment {
-  message ExtendedState {
-    int32 position_in_queue = 1;
-  }
   string uuid = 1;
   Workflow workflow = 2; // workflow with all parameters evaluated
   string template_uuid = 3;
@@ -436,7 +433,6 @@ message Experiment {
   string name = 10;
   repeated string tags = 11;
   map<string, WorkflowTemplate.Parameters> evaluated_nodes_parameters = 12;
-  ExtendedState extended_state = 13;
 }
 
 message RecurringExperiment {
