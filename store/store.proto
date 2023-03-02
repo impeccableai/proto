@@ -256,6 +256,7 @@ message GetExperimentsRequest {
 
     string order_by = 4;
     bool fill_workflow = 5;
+    bool fill_experiments_queue = 8;
   }
   GetExperimentsRequestOptions options = 2;
 }
