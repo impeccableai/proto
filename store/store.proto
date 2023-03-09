@@ -36,7 +36,6 @@ message GetTasksRequest {
 
   GetTasksRequestOptions options = 1;
   bool resolve_trees = 2;
-  bool fill_features = 3;
 }
 
 message GetTasksResponse {
@@ -46,7 +45,6 @@ message GetTasksResponse {
   repeated workflow.Task tasks = 1;
   common.PaginationResponse pagination_response = 2;
   map<string, Tasks> trees = 3;
-  map<string, features.TaskFeatures> tasks_features = 4; // uuid => TaskFeatures
 }
 
 message CreateTaskRequest {

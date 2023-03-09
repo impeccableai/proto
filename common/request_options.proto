@@ -38,3 +38,15 @@ message Filter {
     FilterOperator operator = 2;
     repeated FilterValue values = 3;
 }
+
+message OrderByOptions {
+  message OrderBy {
+    enum Order {
+      ASC = 0;
+      DESC = 1;
+    }
+    string column = 1;
+    Order order = 2;
+  }
+  repeated OrderBy values = 1;
+}
