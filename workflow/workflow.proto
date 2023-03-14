@@ -34,6 +34,25 @@ message Node {
   Resources resources = 5 [deprecated = true];
   UIData ui_data = 6;
   NodeRuntimeEnvironment node_runtime_environment = 7;
+  repeated ControlStatement control_statements = 9;
+  string generated_from_node = 10;
+}
+
+message ControlStatement {
+  message For {
+    // using strings here to later parse it with decimal lib and avoid fp losses
+    string start = 1;
+    string end = 2;
+    string step = 3;
+  }
+  message ForEach {
+    repeated string values = 1;
+  }
+  oneof control_stmt {
+    For for = 1;
+    ForEach for_each = 2;
+  }
+  string ref_name = 3; // parameter
 }
 
 message NodeRuntimeEnvironment {
@@ -295,6 +314,7 @@ enum ExperimentState {
   EXPERIMENT_STATE_DONE = 3;
   EXPERIMENT_STATE_FAILED = 4;
   EXPERIMENT_STATE_PARTIALLY_FAILED = 5;
+  EXPERIMENT_STATE_CANCELED = 6;
 }
 
 message ExperimentStatus {
@@ -377,6 +397,7 @@ message Artifact {
     ARTIFACT_STATE_CREATED = 1;
     ARTIFACT_STATE_READY = 2;
     ARTIFACT_STATE_TASK_FAILED = 3;
+    ARTIFACT_STATE_TASK_CANCELED = 4;
   }
   string task_hash = 1;
   string output_id = 2;
