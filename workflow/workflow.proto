@@ -286,13 +286,13 @@ message SQL {
 }
 
 //
-//   SUBMITTED -> QUEUEING -> PREPARING -> RUNNING -> FINALIZING -> DONE
-//           |           |            |          |             |
-//           |           |            ----------------------------> FAILED
-//           |           |            |          |             |
+//   SUBMITTED -> PREPARING -> QUEUEING -> RUNNING -> FINALIZING -> DONE
+//           |            |            |         |             |
+//           |            |---------------------------------------> FAILED
+//           |            |            |         |             |
 //           -----------------------------------------------------> CANCELED
-//                                    |
-//                                    ----------------------------> ALREADY_DONE
+//                        |
+//                        ----------------------------------------> ALREADY_DONE
 //
 enum NodeState {
   NODE_STATE_INVALID = 0;
