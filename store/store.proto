@@ -206,6 +206,8 @@ message GetDraftsRequest {
     repeated common.Filter owner = 5;
 
     string order_by = 4;
+
+    bool compact = 6; // omit 'big' fields
   }
   GetDraftsRequestOptions options = 1;
 }
@@ -253,7 +255,7 @@ message GetExperimentsRequest {
     repeated common.Filter status = 7;
 
     string order_by = 4;
-    bool fill_workflow = 5;
+    bool compact = 5; // omit 'big' fields
     bool fill_experiments_queue = 8;
   }
   GetExperimentsRequestOptions options = 2;
