@@ -1,0 +1,55 @@
+syntax = "proto3";
+package lumberjack;
+option go_package = "github.com/impeccableai/impeccable/proto/lumberjack";
+
+import "proto/logger/logger.proto";
+import "google/protobuf/timestamp.proto";
+
+enum Source {
+  SOURCE_UNKNOWN = 0;
+  SOURCE_STDOUT = 1;
+  SOURCE_STDERR = 2;
+  SOURCE_SYSTEM = 3;
+}
+
+message GetTaskLogsRequest {
+  message NodeFilter {
+    string node_uuid = 1;
+  }
+  message ExperimentFilter {
+    string experiment_uuid = 1;
+  }
+  oneof main_filter {
+    NodeFilter node_filter = 1;
+    ExperimentFilter experiment_filter = 2;
+    string task_hash = 3;
+  }
+  google.protobuf.Timestamp since = 5;
+  google.protobuf.Timestamp until = 6;
+
+  // limits number of logs returned in response, default = 100
+  int64 limit = 7;
+  // if true, all logs matching filters are returned and field limit is ignored
+  bool all = 8;
+
+  bool descending = 9;
+
+  string query = 10;
+  bool regexp = 11;
+  bool case_sensitive = 12;
+
+  repeated Source sources = 13;
+}
+
+message LogEntry {
+  logger.Log log = 1;
+  string source = 2;
+  google.protobuf.Timestamp timestamp = 3;
+  string experiment_uuid = 4;
+  string node_uuid = 5;
+  string task_hash = 6;
+}
+
+service Lumberjack {
+  rpc GetTaskLogs(GetTaskLogsRequest) returns (stream LogEntry);
+}

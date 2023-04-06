@@ -307,6 +307,12 @@ enum NodeState {
   NODE_STATE_FAILED = 9;
 }
 
+//   SUBMITTED -> RUNNING -> DONE
+//           |          |
+//           |          |--> FAILED
+//           |          |
+//           --------------> CANCELED
+//
 enum ExperimentState {
   EXPERIMENT_STATE_INVALID = 0;
   EXPERIMENT_STATE_SUBMITTED = 1;

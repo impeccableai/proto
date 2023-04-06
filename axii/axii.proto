@@ -56,7 +56,8 @@ message EvalParametersRequest {
 
 message EvalParametersResponse {
   map<string, string> evaluated_parameters = 1;
-  bool parameters_valid = 2;
+  bool parameters_valid = 2 [deprecated = true];
+  map<string, string> eval_errors = 3;
 }
 
 message SubmitServiceRequest {
