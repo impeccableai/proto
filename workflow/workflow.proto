@@ -194,6 +194,12 @@ message Runtime {
   repeated common.ConfigSetRef config_sets = 8;
   AdvancedResources advanced_resources = 21;
   map<string, common.Parameter> new_parameters = 22;
+  repeated SecretMount secret_mounts = 23;
+}
+
+message SecretMount {
+  common.SecretRef secret_ref = 1;
+  string mount_path = 2;
 }
 
 message AdvancedResources {

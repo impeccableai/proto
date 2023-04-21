@@ -197,6 +197,14 @@ message CreateWorkflowResponse {
   workflow.Workflow workflow = 1;
 }
 
+message CreateDraftRequest {
+  string uuid = 1;
+}
+
+message CreateDraftResponse {
+  workflow.Draft draft = 1;
+}
+
 message GetDraftsRequest {
   message GetDraftsRequestOptions {
     common.PaginationOptions pagination_options = 1;
@@ -465,6 +473,7 @@ service Store {
   rpc GetServices(GetServicesRequest) returns (GetServicesResponse);
   rpc GetServiceStatuses(GetServiceStatusesRequest) returns (GetServiceStatusesResponse);
 
+  rpc CreateDraft(CreateDraftRequest) returns (CreateDraftResponse);
   rpc GetDrafts(GetDraftsRequest) returns (GetDraftsResponse);
   rpc GetDraft(GetDraftRequest) returns (GetDraftResponse);
   rpc SaveDraft(SaveDraftRequest) returns (SaveDraftResponse);
