@@ -195,6 +195,7 @@ message Runtime {
   AdvancedResources advanced_resources = 21;
   map<string, common.Parameter> new_parameters = 22;
   repeated SecretMount secret_mounts = 23;
+  repeated int32 ports = 24;
 }
 
 message SecretMount {
