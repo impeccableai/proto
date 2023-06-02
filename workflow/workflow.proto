@@ -36,6 +36,7 @@ message Node {
   NodeRuntimeEnvironment node_runtime_environment = 7;
   repeated ControlStatement control_statements = 9;
   string generated_from_node = 10;
+  TaskSource resolved_task_source = 11; // set by backend during task create / materialise workflow
 }
 
 message ControlStatement {
@@ -215,10 +216,32 @@ message Resources {
   string gpu_mem = 4;
 }
 
+message TaskSource {
+  oneof source {
+    GitSource git = 1;
+    RawSource raw = 2;
+  }
+  RawSource resolved_source = 10; // set by backend during task create / materialise workflow
+}
+
 message PythonScript {
-  string source_uuid = 1;
+  string source_uuid = 1 [deprecated = true]; // use source
   reserved 2,3; // used to be docker image & command;
-  string source_name = 4;
+  string source_name = 4 [deprecated = true];// use source
+  TaskSource source = 5;
+}
+
+message GitSource {
+  string repo_uuid = 1;
+  string ref = 2;
+  string commit = 3;
+  string path = 4;
+  bool follow_ref = 5; // this can be true in node context only
+}
+
+message RawSource {
+  string source_uuid = 1;
+  string source_name = 2;
 }
 
 message PythonScriptRuntime {
@@ -240,8 +263,9 @@ message SQLRuntime {
 }
 
 message SparkJob {
-  string source_uuid = 1;
-  string source_name = 2;
+  string source_uuid = 1 [deprecated = true]; // use source
+  string source_name = 2 [deprecated = true]; // use source
+  TaskSource source = 3;
 }
 
 message SparkJobRuntime {
@@ -288,8 +312,9 @@ message Container {
 }
 
 message SQL {
-  string source_uuid = 1;
-  string source_name = 2;
+  string source_uuid = 1 [deprecated = true]; // use source
+  string source_name = 2 [deprecated = true]; // use source
+  TaskSource source = 3;
 }
 
 //
