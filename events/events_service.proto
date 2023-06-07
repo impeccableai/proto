@@ -1,0 +1,15 @@
+syntax = "proto3";
+package events;
+option go_package = "github.com/impeccableai/impeccable/proto/events";
+
+import "proto/events/events.proto";
+
+message SendRequest {
+  Event event = 1;
+}
+
+message SendResponse {}
+
+service Events {
+  rpc Send(SendRequest) returns (SendResponse) {}
+}

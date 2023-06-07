@@ -355,7 +355,7 @@ enum ExperimentState {
   EXPERIMENT_STATE_CANCELED = 6;
 }
 
-message ExperimentStatus {
+message ExperimentFullStatus {
   string workflow_uuid = 1 [deprecated=true];
   string experiment_uuid = 2;
   ExperimentState state = 3;
@@ -364,6 +364,11 @@ message ExperimentStatus {
   google.protobuf.Timestamp update_timestamp = 5;
 
   string owner = 6;
+}
+
+message ExperimentStatus {
+  string experiment_uuid = 1;
+  ExperimentState state = 2;
 }
 
 message NodeStatus {
@@ -409,25 +414,6 @@ message ActionStatus {
   }
 }
 
-message ExperimentEvent {
-  google.protobuf.Timestamp timestamp = 1;
-  string workflow_uuid = 2 [deprecated=true];
-  string experiment_uuid = 3;
-
-  message ExperimentStatusEvent {
-    ExperimentStatus status = 1;
-  }
-
-  message NodeStatusEvent {
-    string node_uuid = 1;
-    NodeStatus status = 2;
-  }
-
-  oneof event {
-    ExperimentStatusEvent experiment_status_event = 5;
-    NodeStatusEvent node_status_event = 6;
-  }
-}
 
 message Artifact {
   enum ArtifactState {

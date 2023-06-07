@@ -1,0 +1,21 @@
+syntax = "proto3";
+package events;
+option go_package = "github.com/impeccableai/impeccable/proto/events";
+
+import  "proto/workflow/events.proto";
+import "google/protobuf/timestamp.proto";
+
+enum EventType {
+  EVENT_TYPE_INVALID = 0;
+  EXPERIMENT_EVENT = 1;
+  EXPERIMENT_NODE_EVENT = 2;
+}
+
+message Event {
+  google.protobuf.Timestamp timestamp = 1;
+
+  oneof event {
+     workflow.ExperimentEvent experiment_event = 2;
+     workflow.ExperimentNodeEvent experiment_node_event = 3;
+  }
+}
