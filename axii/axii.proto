@@ -192,6 +192,20 @@ message ExportDataSourceResponse {
   string object_uuid = 1;
 }
 
+message ImportRequest {
+  oneof source {
+    workflow.GitSource git = 1;
+    workflow.RawSource raw = 2;
+  }
+  reserved 3 to 10;
+}
+
+message ImportResponse {
+  repeated string tasks_uuids = 1;
+  repeated string data_sources_uuids = 2;
+  repeated string drafts_uuids = 3;
+}
+
 message ValidateDraftRequest {
   workflow.Draft draft = 1;
 }
@@ -246,4 +260,6 @@ service Axii {
   rpc ValidateDraft(ValidateDraftRequest) returns (ValidateDraftResponse);
   rpc ValidateTask(ValidateTaskRequest) returns (ValidateTaskResponse);
   rpc ValidateDataSource(ValidateDataSourceRequest) returns (ValidateDataSourceResponse);
+
+  rpc Import(ImportRequest) returns (ImportResponse);
 }
