@@ -165,38 +165,6 @@ message GetServiceStatusesResponse {
   repeated workflow.Service services = 2;
 }
 
-message GetWorkflowsRequest {
-  message GetWorkflowsRequestOptions {
-    common.PaginationOptions pagination_options = 1;
-
-    repeated common.Filter uuid = 2;
-    repeated common.Filter name = 3;
-
-    string order_by = 4;
-  }
-  GetWorkflowsRequestOptions options = 1;
-}
-
-message GetWorkflowRequest {
-  string uuid = 1;
-}
-
-message GetWorkflowResponse {
-  workflow.Workflow workflow = 1;
-}
-
-message GetWorkflowsResponse {
-  repeated workflow.Workflow workflows = 1;
-  common.PaginationResponse pagination_response = 2;
-}
-
-message CreateWorkflowRequest {
-  workflow.Workflow workflow = 1;
-}
-message CreateWorkflowResponse {
-  workflow.Workflow workflow = 1;
-}
-
 message CreateDraftRequest {
   string uuid = 1;
 }
@@ -261,6 +229,7 @@ message GetExperimentsRequest {
     repeated common.Filter name = 3;
     repeated common.Filter submitted_by = 6;
     repeated common.Filter status = 7;
+    repeated common.Filter triggered_by = 9;
 
     string order_by = 4;
     bool compact = 5; // omit 'big' fields
@@ -409,15 +378,15 @@ message GetModelsResponse {
   common.PaginationResponse pagination_response = 2;
 }
 
-message CreateNamedWorkflowTemplateRequest {
-  workflow.NamedWorkflowTemplate template = 1;
+message CreateWorkflowRequest {
+  workflow.Workflow template = 1;
 }
 
-message CreateNamedWorkflowTemplateResponse {
+message CreateWorkflowResponse {
   string uuid = 1;
 }
 
-message GetNamedWorkflowTemplateRequest {
+message GetWorkflowRequest {
   message NameVersion {
     string name = 1;
     string version = 2;
@@ -428,12 +397,12 @@ message GetNamedWorkflowTemplateRequest {
   }
 }
 
-message GetNamedWorkflowTemplateResponse {
-  workflow.NamedWorkflowTemplate template = 1;
+message GetWorkflowResponse {
+  workflow.Workflow template = 1;
 }
 
-message GetNamedWorkflowTemplatesRequest {
-  message GetNamedWorkflowTemplatesRequestOptions {
+message GetWorkflowsRequest {
+  message GetWorkflowsRequestOptions {
     common.PaginationOptions pagination_options = 1;
 
     repeated common.Filter uuid = 2;
@@ -443,13 +412,19 @@ message GetNamedWorkflowTemplatesRequest {
 
     string order_by = 4;
   }
-  GetNamedWorkflowTemplatesRequestOptions options = 1;
+  GetWorkflowsRequestOptions options = 1;
 }
 
-message GetNamedWorkflowTemplatesResponse {
-  repeated workflow.NamedWorkflowTemplate named_workflow_templates = 1;
+message GetWorkflowsResponse {
+  repeated workflow.Workflow named_workflow_templates = 1;
   common.PaginationResponse pagination_response = 2;
 }
+
+message DeleteWorkflowRequest {
+  string uuid = 1;
+}
+
+message DeleteWorkflowResponse {}
 
 service Store {
   rpc GetTasks(GetTasksRequest) returns (GetTasksResponse);
@@ -488,9 +463,23 @@ service Store {
   rpc GetWorkflowTemplate(GetWorkflowTemplateRequest) returns (GetWorkflowTemplateResponse);
   rpc SaveWorkflowTemplate(SaveWorkflowTemplateRequest) returns (SaveWorkflowTemplateResponse);
 
-  rpc CreateNamedWorkflowTemplate(CreateNamedWorkflowTemplateRequest) returns (CreateNamedWorkflowTemplateResponse);
-  rpc GetNamedWorkflowTemplate(GetNamedWorkflowTemplateRequest) returns (GetNamedWorkflowTemplateResponse);
-  rpc GetNamedWorkflowTemplates(GetNamedWorkflowTemplatesRequest) returns (GetNamedWorkflowTemplatesResponse);
+  rpc CreateNamedWorkflowTemplate(CreateWorkflowRequest) returns (CreateWorkflowResponse) {
+    option deprecated = true;
+  };
+  rpc GetNamedWorkflowTemplate(GetWorkflowRequest) returns (GetWorkflowResponse) {
+    option deprecated = true;
+  };
+  rpc GetNamedWorkflowTemplates(GetWorkflowsRequest) returns (GetWorkflowsResponse) {
+    option deprecated = true;
+  };
+  rpc DeleteNamedWorkflowTemplate(DeleteWorkflowRequest) returns (DeleteWorkflowResponse) {
+    option deprecated = true;
+  };
+
+  rpc CreateWorkflow(CreateWorkflowRequest) returns (CreateWorkflowResponse);
+  rpc GetWorkflow(GetWorkflowRequest) returns (GetWorkflowResponse);
+  rpc GetWorkflows(GetWorkflowsRequest) returns (GetWorkflowsResponse);
+  rpc DeleteWorkflow(DeleteWorkflowRequest) returns (DeleteWorkflowResponse);
 
   rpc CreateRecurringExperiment(CreateRecurringExperimentRequest) returns (CreateRecurringExperimentResponse);
   rpc GetRecurringExperiment(GetRecurringExperimentRequest) returns (GetRecurringExperimentResponse);

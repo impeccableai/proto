@@ -9,18 +9,9 @@ import "proto/common/entities.proto";
 import "proto/common/validation.proto";
 import "proto/store/store.proto";
 
-message CreateWorkflowAndRunRequest {
-  workflow.Workflow workflow = 1;
-}
-
-message CreateWorkflowAndRunResponse {
-  string workflow_uuid = 1;
-  string execution_id = 2;
-  workflow.Workflow workflow = 3;
-}
-
 message SubmitDraftRequest {
   workflow.Draft draft = 1;
+  map<string, string> inputs = 2;
 }
 
 message SubmitDraftResponse {
@@ -118,7 +109,7 @@ message ExportDraftResponse {
 }
 
 message ImportNamedWorkflowTemplateRequest {
-  workflow.NamedWorkflowTemplate named_workflow_template = 1;
+  workflow.Workflow named_workflow_template = 1;
   workflow.WorkflowTemplate workflow_template = 2;
   repeated system.Secret secrets = 3;
   repeated common.ConfigSet config_sets = 4;
@@ -136,7 +127,7 @@ message ImportNamedWorkflowTemplateResponse {
 message ExportNamedWorkflowTemplateRequest {
   oneof id {
     string uuid = 1;
-    store.GetNamedWorkflowTemplateRequest.NameVersion name = 2;
+    store.GetWorkflowRequest.NameVersion name = 2;
   }
   string secret_encryption_key = 3;
 }
@@ -145,13 +136,19 @@ message ExportNamedWorkflowTemplateResponse {
   string object_uuid = 1;
 }
 
-message SubmitNamedWorkflowTemplateRequest {
+message SubmitWorkflowRequest {
   string template_name = 1;
   string template_version = 2;
   workflow.WorkflowTemplate.Parameters parameters = 3;
+  map<string, string> inputs = 4;
 }
 
-message SubmitNamedWorkflowTemplateResponse {
+message SubmitSubWorkflowRequest {
+  SubmitWorkflowRequest submit_workflow_request = 1;
+  string parent_experiment_uuid = 2;
+}
+
+message SubmitWorkflowResponse {
   string experiment_uuid = 1;
 }
 
@@ -236,6 +233,11 @@ service Axii {
   rpc CancelExperiment(CancelExperimentRequest) returns (CancelExperimentResponse);
 
   rpc CreateRecurringExperimentFromExperiment(CreateRecurringExperimentFromExperimentRequest) returns (CreateRecurringExperimentFromExperimentResponse);
+  rpc SubmitNamedWorkflowTemplate(SubmitWorkflowRequest) returns (SubmitWorkflowResponse) {
+    option deprecated = true;
+  };
+  rpc SubmitWorkflow(SubmitWorkflowRequest) returns (SubmitWorkflowResponse);
+  rpc SubmitSubWorkflow(SubmitSubWorkflowRequest) returns (SubmitWorkflowResponse);
 
   rpc EvalParameters(EvalParametersRequest) returns (EvalParametersResponse);
 
@@ -249,7 +251,6 @@ service Axii {
 
   rpc ImportNamedWorkflowTemplate(ImportNamedWorkflowTemplateRequest) returns (ImportNamedWorkflowTemplateResponse);
   rpc ExportNamedWorkflowTemplate(ExportNamedWorkflowTemplateRequest) returns (ExportNamedWorkflowTemplateResponse);
-  rpc SubmitNamedWorkflowTemplate(SubmitNamedWorkflowTemplateRequest) returns (SubmitNamedWorkflowTemplateResponse);
 
   rpc ImportTask(ImportTaskRequest) returns (ImportTaskResponse);
   rpc ExportTask(ExportTaskRequest) returns (ExportTaskResponse);

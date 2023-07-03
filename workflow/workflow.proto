@@ -8,7 +8,7 @@ import "proto/common/data.proto";
 import "proto/common/entities.proto";
 import "proto/common/resources.proto";
 
-message Workflow {
+message WorkflowSpec {
   string uuid = 1;
   string name = 2 [deprecated=true];
 
@@ -29,6 +29,8 @@ message Node {
     Task task = 2;
     DataSource data_source = 3;
     Action action = 8;
+    Workflow workflow = 12;
+    WorkflowIO workflow_io = 13;
   }
   Runtime runtime = 4;
   Resources resources = 5 [deprecated = true];
@@ -140,6 +142,11 @@ message DataIO {
   common.DataKind data_kind = 6;
   bool optional = 7;
   bool multiple = 8;
+}
+
+message DataIOWithObject {
+  DataIO data_io = 1;
+  string object_uuid = 2;
 }
 
 message Task {
@@ -317,6 +324,17 @@ message SQL {
   TaskSource source = 3;
 }
 
+message SubWorkflow {
+  string uuid = 1;
+  string name = 2;
+  string description = 3;
+
+  WorkflowTemplate workflow_template = 4;
+
+  repeated DataIO inputs = 13;
+  repeated DataIO outputs = 14;
+}
+
 //
 //   SUBMITTED -> PREPARING -> QUEUEING -> RUNNING -> FINALIZING -> DONE
 //           |            |            |         |             |
@@ -381,6 +399,8 @@ message NodeStatus {
   oneof status {
     TaskStatus task_status = 6;
     ActionStatus action_status = 7;
+    WorkflowStatus workflow_status = 9;
+    WorkflowIOStatus workflow_io_status = 10;
   }
 }
 
@@ -414,6 +434,13 @@ message ActionStatus {
   }
 }
 
+message WorkflowStatus {
+  string experiment_uuid = 1;
+}
+
+message WorkflowIOStatus {
+  string object_uuid = 1;
+}
 
 message Artifact {
   enum ArtifactState {
@@ -448,21 +475,40 @@ message WorkflowTemplate {
     map<string, string> parameters = 1;
   }
   string uuid = 1;
-  Workflow workflow = 2; // might have unevaluated parameters
+  WorkflowSpec workflow = 2; // might have unevaluated parameters
   Parameters parameters = 3;
 
   google.protobuf.Timestamp created_at = 4;
   string parent_experiment_uuid = 5;
 }
 
-message NamedWorkflowTemplate {
+message Workflow {
   string uuid = 1;
-  string template_uuid = 2;
+  oneof template {
+    string template_uuid = 2;
+    WorkflowTemplate template_obj = 9;
+  }
   string name = 3;
   string version = 4;
   string owner = 6;
 
   google.protobuf.Timestamp created_at = 5;
+
+  // copied from unconnected template inputs
+  repeated DataIO inputs = 7;
+  // copied from unconnected template outputs
+  repeated DataIO outputs = 8;
+}
+
+message WorkflowIO {
+  oneof io {
+    DataIOWithObject input = 1;
+    DataIO output = 2;
+  }
+
+  // always one input or one output - repeated only to match Node API
+  repeated DataIO inputs = 7;
+  repeated DataIO outputs = 8;
 }
 
 message Experiment {
@@ -470,18 +516,21 @@ message Experiment {
     int32 position_in_queue = 1;
   }
   string uuid = 1;
-  Workflow workflow = 2; // workflow with all parameters evaluated
+  WorkflowSpec workflow = 2; // workflow with all parameters evaluated
   string template_uuid = 3;
   WorkflowTemplate.Parameters evaluated_parameters = 4;
   google.protobuf.Timestamp created_at = 5;
   google.protobuf.Timestamp updated_at = 6;
   ExperimentState state = 7;
   repeated NodeStatus node_statuses = 8;
+  // user on whose behalf the experiment was submitted and is using their permissions
   string submitted_by = 9;
   string name = 10;
   repeated string tags = 11;
   map<string, WorkflowTemplate.Parameters> evaluated_nodes_parameters = 12;
   ExtendedState extended_state = 13;
+  // type and identifier of entity that triggered the experiment in format <type>/<uuid/email>
+  string triggered_by = 14;
 }
 
 message RecurringExperiment {

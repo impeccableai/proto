@@ -2,7 +2,6 @@ syntax = "proto3";
 package workflow;
 option go_package = "github.com/impeccableai/impeccable/proto/workflow";
 
-import "google/protobuf/timestamp.proto";
 import "proto/workflow/workflow.proto";
 
 message ExperimentEvent {
