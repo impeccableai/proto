@@ -199,8 +199,7 @@ message ImportRequest {
 
 message ImportResponse {
   repeated string tasks_uuids = 1;
-  repeated string data_sources_uuids = 2;
-  repeated string drafts_uuids = 3;
+  repeated string templates_uuids = 2;
 }
 
 message ValidateDraftRequest {

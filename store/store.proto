@@ -56,6 +56,14 @@ message CreateTaskResponse {
   workflow.Task task = 1;
 }
 
+message ImportTaskRequest {
+  workflow.Task task = 1;
+}
+
+message ImportTaskResponse {
+  workflow.Task task = 1;
+}
+
 message SaveTaskRequest {
   workflow.Task task = 1;
 }
@@ -167,6 +175,7 @@ message GetServiceStatusesResponse {
 
 message CreateDraftRequest {
   string uuid = 1;
+  string workflow_template_uuid = 2;
 }
 
 message CreateDraftResponse {
@@ -426,6 +435,14 @@ message DeleteWorkflowRequest {
 
 message DeleteWorkflowResponse {}
 
+message ImportWorkflowTemplateRequest {
+  workflow.WorkflowTemplate template = 1;
+}
+
+message ImportWorkflowTemplateResponse {
+  workflow.WorkflowTemplate template = 1;
+}
+
 service Store {
   rpc GetTasks(GetTasksRequest) returns (GetTasksResponse);
   rpc GetTask(GetTaskRequest) returns (GetTaskResponse);
@@ -433,6 +450,7 @@ service Store {
   rpc SaveTask(SaveTaskRequest) returns (SaveTaskResponse);
   rpc SetTaskState(SetTaskStateRequest) returns (SetTaskStateResponse);
   rpc DeleteTask(DeleteTaskRequest) returns (DeleteTaskResponse);
+  rpc StoreImportTask(ImportTaskRequest) returns (ImportTaskResponse);
 
   rpc GetDataSources(GetDataSourcesRequest) returns (GetDataSourcesResponse);
   rpc GetDataSource(GetDataSourceRequest) returns (GetDataSourceResponse);
@@ -462,6 +480,7 @@ service Store {
 
   rpc GetWorkflowTemplate(GetWorkflowTemplateRequest) returns (GetWorkflowTemplateResponse);
   rpc SaveWorkflowTemplate(SaveWorkflowTemplateRequest) returns (SaveWorkflowTemplateResponse);
+  rpc StoreImportWorkflowTemplate(ImportWorkflowTemplateRequest) returns (ImportWorkflowTemplateResponse);
 
   rpc CreateNamedWorkflowTemplate(CreateWorkflowRequest) returns (CreateWorkflowResponse) {
     option deprecated = true;
