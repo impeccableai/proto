@@ -1,0 +1,13 @@
+syntax = "proto3";
+package system;
+option go_package = "github.com/impeccableai/impeccable/proto/system";
+
+import "proto/common/entities.proto";
+
+message GitRepo {
+  string uuid = 1;
+  string name = 2;
+  string url = 3;
+  bool private = 4;
+  common.SecretRef ssh_key = 5;
+}
