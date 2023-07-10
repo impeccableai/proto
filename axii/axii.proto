@@ -4,7 +4,7 @@ option go_package = "github.com/impeccableai/impeccable/proto/axii";
 
 import "proto/workflow/workflow.proto";
 import "proto/system/secrets.proto";
-import "proto/system/system.proto";
+import "proto/system/git.proto";
 import "proto/common/entities.proto";
 import "proto/common/validation.proto";
 import "proto/store/store.proto";
