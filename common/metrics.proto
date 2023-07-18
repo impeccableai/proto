@@ -1,0 +1,16 @@
+syntax = "proto3";
+package common;
+option go_package = "github.com/impeccableai/impeccable/proto/common";
+
+import "google/protobuf/timestamp.proto";
+
+message Metric {
+  string node_uuid = 1;
+  google.protobuf.Timestamp timestamp = 2;
+  int64 milli_cpu = 3;
+  int64 memory = 4;
+}
+
+message Metrics {
+  repeated Metric metrics = 1;
+}

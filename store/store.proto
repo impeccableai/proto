@@ -3,9 +3,10 @@ package store;
 option go_package = "github.com/impeccableai/impeccable/proto/store";
 
 import "google/protobuf/timestamp.proto";
-import "proto/workflow/workflow.proto";
 import "proto/common/request_options.proto";
+import "proto/common/metrics.proto";
 import "proto/features/features.proto";
+import "proto/workflow/workflow.proto";
 
 message GetTaskRequest {
   string uuid = 1;
@@ -443,6 +444,16 @@ message ImportWorkflowTemplateResponse {
   workflow.WorkflowTemplate template = 1;
 }
 
+message GetMetricsRequest {
+  string node_uuid = 1;
+  google.protobuf.Timestamp since = 2;
+  google.protobuf.Timestamp until = 3;
+}
+
+message GetMetricsResponse {
+  repeated common.Metric metrics = 1;
+}
+
 service Store {
   rpc GetTasks(GetTasksRequest) returns (GetTasksResponse);
   rpc GetTask(GetTaskRequest) returns (GetTaskResponse);
@@ -507,4 +518,6 @@ service Store {
   rpc DeleteRecurringExperiment(DeleteRecurringExperimentRequest) returns (DeleteRecurringExperimentResponse);
 
   rpc GetModels(GetModelsRequest) returns (GetModelsResponse);
+
+  rpc GetMetrics(GetMetricsRequest) returns (GetMetricsResponse);
 }
