@@ -1,0 +1,42 @@
+syntax = "proto3";
+package axii;
+option go_package = "github.com/impeccableai/impeccable/proto/axii";
+
+import "google/protobuf/timestamp.proto";
+import "proto/common/request_options.proto";
+
+message GetContributionsDataRequest {
+  message GetContributionsDataRequestOptions {
+    enum TimeAggregate {
+      TIME_AGGREGATE_INVALID = 0;
+      TIME_AGGREGATE_DAY = 1;
+      TIME_AGGREGATE_WEEK = 2;
+      TIME_AGGREGATE_MONTH = 3;
+      TIME_AGGREGATE_YEAR = 4;
+    }
+
+    repeated common.Filter date_range = 1;
+    repeated common.Filter users = 2;
+    repeated common.Filter tags = 3;
+
+    TimeAggregate time_aggregate = 20;
+  }
+
+
+  GetContributionsDataRequestOptions options = 1;
+}
+
+message GetContributionsDataResponse {
+  message Entry {
+    google.protobuf.Timestamp timestamp = 1;
+    int32 count = 2;
+  }
+  repeated Entry data_sources = 1;
+  repeated Entry tasks = 2;
+  repeated Entry experiments = 3;
+  repeated Entry artifacts = 4;
+}
+
+service DashboardBackend {
+  rpc GetContributionsData(GetContributionsDataRequest) returns (GetContributionsDataResponse);
+}

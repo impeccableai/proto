@@ -31,6 +31,10 @@ message GetTasksRequest {
     repeated common.Filter uuid = 2;
     repeated common.Filter name = 3;
     repeated common.Filter state = 5;
+    repeated common.Filter created_at = 6;
+    repeated common.Filter updated_at = 7;
+    repeated common.Filter owner = 8;
+    repeated common.Filter tags = 9;
 
     string order_by = 4;
   }
@@ -73,6 +77,14 @@ message SaveTaskResponse {
   workflow.Task task = 1;
 }
 
+message UpdateTaskRequest {
+  workflow.Task task = 1;
+}
+
+message UpdateTaskResponse {
+  workflow.Task task = 1;
+}
+
 message DeleteTaskRequest {
   string uuid = 1;
 }
@@ -95,6 +107,10 @@ message GetDataSourcesRequest {
     repeated common.Filter name = 3;
     repeated common.Filter state = 5;
     repeated common.Filter source_uuid = 6;
+    repeated common.Filter created_at = 7;
+    repeated common.Filter updated_at = 8;
+    repeated common.Filter owner = 9;
+    repeated common.Filter tags = 10;
 
     string order_by = 4;
   }
@@ -240,6 +256,9 @@ message GetExperimentsRequest {
     repeated common.Filter submitted_by = 6;
     repeated common.Filter status = 7;
     repeated common.Filter triggered_by = 9;
+    repeated common.Filter created_at = 10;
+    repeated common.Filter updated_at = 11;
+    repeated common.Filter tags = 12;
 
     string order_by = 4;
     bool compact = 5; // omit 'big' fields
@@ -459,6 +478,7 @@ service Store {
   rpc GetTask(GetTaskRequest) returns (GetTaskResponse);
   rpc CreateTask(CreateTaskRequest) returns (CreateTaskResponse);
   rpc SaveTask(SaveTaskRequest) returns (SaveTaskResponse);
+  rpc UpdateTask(UpdateTaskRequest) returns (UpdateTaskResponse);
   rpc SetTaskState(SetTaskStateRequest) returns (SetTaskStateResponse);
   rpc DeleteTask(DeleteTaskRequest) returns (DeleteTaskResponse);
   rpc StoreImportTask(ImportTaskRequest) returns (ImportTaskResponse);
