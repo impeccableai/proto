@@ -1,0 +1,223 @@
+syntax = "proto3";
+package system;
+option go_package = "github.com/impeccableai/impeccable/proto/system";
+
+import "proto/common/resources.proto";
+import "proto/common/entities.proto";
+import "proto/common/status.proto";
+import "proto/system/git.proto";
+
+message Status {
+  common.Status auth = 1;
+  common.Status axii_backend = 2;
+  common.Status git_service = 3;
+  common.Status inventory = 4;
+  common.Status lumberjack = 5;
+  common.Status metrics_collector = 6;
+  common.Status notifier = 7;
+  common.Status orchestrator = 8;
+  common.Status previewer = 9;
+  common.Status search = 10;
+  common.Status store = 11;
+  common.Status system = 12;
+}
+
+message Config {
+  repeated Store stores = 1;
+  repeated RuntimeEnvironment runtime_environments = 2;
+  repeated SparkConfig spark_configs = 3;
+  repeated Cluster clusters = 4;
+  repeated GitRepo git_repos = 5;
+}
+
+message RuntimeEnvironment {
+  string name = 1;
+  oneof store {
+    string store_name = 2;
+    Store store_definition = 3;
+  }
+  map<string, string> environment_variables = 4;
+  bool default = 5;
+  common.Resources default_job_resources = 6;
+  repeated common.ConfigSetRef config_sets = 7;
+  oneof cluster {
+    string cluster_name = 8;
+    Cluster cluster_definition = 9;
+  }
+}
+
+message Store {
+  string name = 1;
+  enum Type {
+    STORE_TYPE_INVALID = 0;
+    FILE_SYSTEM = 1;
+    S3 = 2;
+    MEMORY = 3; // only for tests
+    GCS = 4;
+  }
+  Type type = 2;
+  StoreParams params = 3;
+  bool local = 4;
+  bool default = 5;
+  // In which cluster store is available. If empty, then store is available in all clusters.
+  string cluster = 6;
+
+  // If non-zero, it means that store has limited space
+  uint64 max_bytes = 7;
+}
+
+message StoreParams {
+  oneof params {
+    FSStoreParams fs_store_params = 1;
+    S3StoreParams s3_store_params = 2;
+    GCSStoreParams gcs_store_params = 3;
+  }
+}
+
+message FSStoreParams {
+  string root = 1 [deprecated = true];
+  bool archive_dirs = 2;
+  oneof backend {
+    KubernetesVolume kubernetes_volume = 3;
+    //    DockerVolume docker_volume = 4;
+  }
+  message LocalFileSystem {
+    string root = 1;
+  }
+  message RemoteFileSystem {
+    string address = 1;
+  }
+  oneof config {
+    LocalFileSystem local_fs = 5;
+    RemoteFileSystem remote_fs = 6;
+  }
+}
+
+message KubernetesVolume {
+  string persistent_volume_claim = 1;
+  string cluster_name = 2;
+}
+
+message SecretParamRef {
+  oneof source {
+    string env_key = 1;
+    string path = 2;
+  }
+}
+
+message S3StoreParams {
+  string endpoint = 1;
+  string access_key = 2;
+  SecretParamRef secret_key_ref = 7 [deprecated = true];
+  common.EnvValue secret_key = 8;
+  bool use_ssl = 4;
+
+  string region = 5;
+  string bucket = 6;
+}
+
+message GCSStoreParams {
+  string bucket = 1;
+  common.SecretRef google_app_creds = 2;
+}
+
+message SparkConfig {
+  message EventLogConfig {
+    bool event_log_enabled = 1;
+    string event_log_dir = 2;
+    string event_log_pvc_name = 3; // k8s only
+  }
+  message SparkYarnConfig {
+    // https://spark.apache.org/docs/3.2.1/running-on-yarn.html#spark-properties
+  }
+  message SparkK8SConfig {
+    // https://spark.apache.org/docs/latest/running-on-kubernetes.html#spark-properties
+    string job_submit_image = 1;
+    common.Resources submit_container_resources = 2;
+    string driver_service_account_name = 3;
+    string tmp_s3_path = 4;
+    EventLogConfig event_log_config = 5;
+    bool spark_operator_available = 6;
+    string jars_cache_pvc = 7;
+    string spark_jobs_namespace = 8;
+  }
+  message StoreConfig {
+    oneof store {
+      string store_name = 1;
+      Store store_definition = 2;
+    }
+    map<string, string> conf = 3;
+  }
+  string name = 1;
+  string master = 2;
+  StoreConfig store_config = 3;
+  oneof config {
+    SparkK8SConfig k8s_config = 4;
+    SparkYarnConfig yarn_config = 5;
+  }
+  bool default = 6;
+}
+
+enum LocalInventoryMode {
+  INVENTORY_MODE_INVALID = 0;
+  INVENTORY_MODE_NONE = 1;
+  INVENTORY_MODE_SINGLE = 2;
+  INVENTORY_MODE_PER_NODE = 3;
+}
+
+enum ClusterType {
+  CLUSTER_TYPE_INVALID = 0;
+  CLUSTER_TYPE_KUBERNETES = 1;
+//  CLUSTER_TYPE_DOCKER = 2;
+}
+
+enum ClusterDataMode {
+  CLUSTER_DATA_MODE_INVALID = 0;
+  CLUSTER_DATA_MODE_EPHEMERAL = 1;
+  CLUSTER_DATA_MODE_SHARED = 2;
+  CLUSTER_DATA_MODE_LOCAL = 3;
+}
+
+message Cluster {
+  string name = 1;
+  ClusterType type = 2;
+  bool default = 3;
+  LocalInventoryConfig local_inventory_config = 4;
+  ClusterDataMode data_mode = 5;
+  ClusterBackend backend = 6;
+}
+
+message ClusterBackend {
+  oneof backend {
+    KubernetesCluster kubernetes_cluster = 1;
+  }
+}
+
+message LocalInventoryConfig {
+  LocalInventoryMode mode = 1;
+  message NoneConfig {}
+  message PerNodeConfig {
+    string app_label = 1;
+    int32 host_port = 2;
+    string pvc = 3;
+  }
+  message SingleConfig {
+    string service = 1;
+    int32 port = 2;
+    string pvc = 3;
+  }
+  oneof config {
+    NoneConfig none_config = 2;
+    PerNodeConfig per_node_config = 3;
+    SingleConfig single_config = 4;
+  }
+}
+
+message KubernetesCluster {
+  string address = 1;
+  string config_path = 2;
+  bool local = 3;
+  bool autoclean = 4;
+  string namespace = 5;
+  repeated string image_pull_secrets = 6;
+}

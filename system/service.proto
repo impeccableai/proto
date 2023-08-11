@@ -1,0 +1,258 @@
+syntax = "proto3";
+package system;
+option go_package = "github.com/impeccableai/impeccable/proto/system";
+
+import "proto/system/system.proto";
+import "proto/system/git.proto";
+import "proto/common/resources.proto";
+import "proto/common/status.proto";
+
+message GetStatusRequest {}
+
+message GetStatusResponse {
+  common.Status status = 1;
+  Status component_statuses = 2;
+}
+
+message GetRuntimeEnvironmentsRequest {
+  // returns only default runtime environment
+  bool default = 1;
+}
+
+message GetRuntimeEnvironmentsResponse {
+  repeated RuntimeEnvironment runtime_environments = 1;
+}
+
+message CreateRuntimeEnvironmentRequest {
+  RuntimeEnvironment runtime_environment = 1;
+}
+
+message CreateRuntimeEnvironmentResponse {
+  RuntimeEnvironment runtime_environment = 1;
+}
+
+message UpdateRuntimeEnvironmentRequest {
+  RuntimeEnvironment runtime_environment = 1;
+}
+
+message UpdateRuntimeEnvironmentResponse {
+  RuntimeEnvironment runtime_environment = 1;
+}
+
+message DeleteRuntimeEnvironmentRequest {
+  string name = 1;
+}
+
+message DeleteRuntimeEnvironmentResponse {
+
+}
+
+message CreateStoreRequest {
+  Store store = 1;
+}
+
+message CreateStoreResponse {
+  Store store = 1;
+}
+
+message GetStoresRequest {
+  bool with_local = 1;
+}
+
+message GetStoresResponse {
+  repeated Store stores = 1;
+}
+
+message UpdateStoreRequest {
+  Store store = 1;
+}
+
+message UpdateStoreResponse {
+  Store store = 1;
+}
+
+message DeleteStoreRequest {
+  string name = 1;
+}
+
+message DeleteStoreResponse {
+}
+
+message CreateClusterRequest {
+  Cluster cluster = 1;
+}
+
+message CreateClusterResponse {
+  Cluster cluster = 1;
+}
+
+message GetClustersRequest {}
+
+message GetClustersResponse {
+  repeated Cluster clusters = 1;
+}
+
+message UpdateClusterRequest {
+  Cluster cluster = 1;
+}
+
+message UpdateClusterResponse {
+  Cluster cluster = 1;
+}
+
+message DeleteClusterRequest {
+  string name = 1;
+}
+
+message DeleteClusterResponse {
+}
+
+message GetSparkConfigsRequest {
+  // returns only default spark config
+  bool default = 1;
+}
+
+message GetSparkConfigsResponse {
+  repeated SparkConfig spark_configs = 1;
+}
+
+message CreateSparkConfigRequest {
+  SparkConfig spark_config = 1;
+}
+
+message CreateSparkConfigResponse {
+  SparkConfig spark_config = 1;
+}
+
+message UpdateSparkConfigRequest {
+  SparkConfig spark_config = 1;
+}
+
+message UpdateSparkConfigResponse {
+  SparkConfig spark_config = 1;
+}
+
+message DeleteSparkConfigRequest {
+  string name = 1;
+}
+
+message DeleteSparkConfigResponse {
+
+}
+
+message GetConfigRequest {}
+
+message GetConfigResponse {
+  Config config = 1;
+  string text_config = 2;
+}
+
+message UpdateConfigRequest {
+    Config config = 1;
+}
+
+message UpdateConfigResponse {}
+
+message CreateNamedResourcesRequest {
+  common.NamedResources named_resource = 1;
+}
+
+message CreateNamedResourcesResponse {}
+
+message GetNamedResourcesRequest {}
+
+message GetNamedResourcesResponse {
+  repeated common.NamedResources named_resources = 1;
+}
+
+message UpdateNamedResourcesRequest {
+  common.NamedResources named_resource = 1;
+}
+
+message UpdateNamedResourcesResponse {
+  common.NamedResources named_resource = 1;
+}
+
+message DeleteNamedResourcesRequest {
+  string name = 1;
+}
+
+message DeleteNamedResourcesResponse {}
+
+message CreateGitRepoRequest {
+  GitRepo repo = 1;
+}
+
+message CreateGitRepoResponse {
+  GitRepo repo = 1;
+}
+
+message GetGitRepoRequest {
+  string uuid = 1;
+}
+
+message GetGitRepoResponse {
+  GitRepo repo = 1;
+}
+
+message GetGitReposRequest {
+  repeated string uuids = 1;
+}
+
+message GetGitReposResponse {
+  repeated GitRepo repos = 1;
+}
+
+message UpdateGitRepoRequest {
+  GitRepo repo = 1;
+}
+
+message UpdateGitRepoResponse {
+  GitRepo repo = 1;
+}
+
+message DeleteGitReposRequest {
+  repeated string uuids = 1;
+}
+
+message DeleteGitReposResponse {
+}
+
+
+service System {
+  rpc GetStatus(GetStatusRequest) returns (GetStatusResponse);
+
+  rpc CreateRuntimeEnvironment(CreateRuntimeEnvironmentRequest) returns (CreateRuntimeEnvironmentResponse);
+  rpc GetRuntimeEnvironments(GetRuntimeEnvironmentsRequest) returns (GetRuntimeEnvironmentsResponse);
+  rpc UpdateRuntimeEnvironment(UpdateRuntimeEnvironmentRequest) returns (UpdateRuntimeEnvironmentResponse);
+  rpc DeleteRuntimeEnvironment(DeleteRuntimeEnvironmentRequest) returns (DeleteRuntimeEnvironmentResponse);
+
+  rpc CreateNamedResources(CreateNamedResourcesRequest) returns (CreateNamedResourcesResponse);
+  rpc GetNamedResources(GetNamedResourcesRequest) returns (GetNamedResourcesResponse);
+  rpc UpdateNamedResources(UpdateNamedResourcesRequest) returns (UpdateNamedResourcesResponse);
+  rpc DeleteNamedResources(DeleteNamedResourcesRequest) returns (DeleteNamedResourcesResponse);
+
+  rpc CreateStore(CreateStoreRequest) returns (CreateStoreResponse);
+  rpc GetStores(GetStoresRequest) returns (GetStoresResponse);
+  rpc UpdateStore(UpdateStoreRequest) returns (UpdateStoreResponse);
+  rpc DeleteStore(DeleteStoreRequest) returns (DeleteStoreResponse);
+
+  rpc CreateCluster(CreateClusterRequest) returns (CreateClusterResponse);
+  rpc GetClusters(GetClustersRequest) returns (GetClustersResponse);
+  rpc UpdateCluster(UpdateClusterRequest) returns (UpdateClusterResponse);
+  rpc DeleteCluster(DeleteClusterRequest) returns (DeleteClusterResponse);
+
+  rpc CreateSparkConfig(CreateSparkConfigRequest) returns (CreateSparkConfigResponse);
+  rpc GetSparkConfigs(GetSparkConfigsRequest) returns (GetSparkConfigsResponse);
+  rpc UpdateSparkConfig(UpdateSparkConfigRequest) returns (UpdateSparkConfigResponse);
+  rpc DeleteSparkConfig(DeleteSparkConfigRequest) returns (DeleteSparkConfigResponse);
+
+  rpc GetConfig(GetConfigRequest) returns (GetConfigResponse);
+  rpc UpdateConfig(UpdateConfigRequest) returns (UpdateConfigResponse);
+
+  rpc GetGitRepo(GetGitRepoRequest) returns (GetGitRepoResponse);
+  rpc GetGitRepos(GetGitReposRequest) returns (GetGitReposResponse);
+  rpc CreateGitRepo(CreateGitRepoRequest) returns (CreateGitRepoResponse);
+  rpc UpdateGitRepo(UpdateGitRepoRequest) returns (UpdateGitRepoResponse);
+  rpc DeleteGitRepos(DeleteGitReposRequest) returns (DeleteGitReposResponse);
+}
