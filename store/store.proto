@@ -470,7 +470,7 @@ message GetMetricsRequest {
 }
 
 message GetMetricsResponse {
-  repeated common.Metrics metrics = 1;
+  repeated common.Metric metrics = 1;
 }
 
 service Store {

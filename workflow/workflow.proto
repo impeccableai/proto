@@ -417,11 +417,8 @@ message NodeStatuses {
 
 message TaskStatus {
   string task_hash = 1;
-  reserved 2, 3;
   google.protobuf.Timestamp started_at = 4;
   google.protobuf.Timestamp finished_at = 5;
-
-  repeated common.NamedAddress addresses = 6;
 }
 
 message ActionStatus {
@@ -576,8 +573,7 @@ enum ServiceState {
 
 message ServiceStatus {
   ServiceState state = 1;
-  repeated string addresses = 2 [ deprecated = true ];
-  repeated common.NamedAddress named_addresses = 3;
+  repeated string addresses = 2;
 }
 
 message ServiceDefinition {
@@ -618,18 +614,11 @@ message ServiceContainerDefinition {
   repeated ServiceVolume volumes = 5;
   repeated Endpoint endpoints = 6;
   map<string, string> parameters = 7;
-  repeated File files = 8;
-}
-
-message File {
-  string mount_path = 1;
-  string content = 2;
 }
 
 message ServiceVolume {
   string mount_path = 1;
   bool read_only = 2;
-  bool temporary = 4;
 
   // filled when submitting
   string uuid = 3;
@@ -639,7 +628,6 @@ message Endpoint {
   int32 port = 1;
   string name = 2;
   string default_url = 3;
-  bool dont_rewrite_target = 4;
 }
 
 message TaskExtension {

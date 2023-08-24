@@ -48,8 +48,3 @@ message ExtendedObjectRef {
   ObjectRef object_ref = 1;
   common.DataKind data_kind = 2;
 }
-
-message NamedAddress {
-  string address = 1;
-  string name = 2;
-}
