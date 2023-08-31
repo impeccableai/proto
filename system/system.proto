@@ -137,9 +137,14 @@ message SparkConfig {
     string driver_service_account_name = 3;
     string tmp_s3_path = 4;
     EventLogConfig event_log_config = 5;
+    // If true, then spark operator is used for submitting jobs
     bool spark_operator_available = 6;
+    // PVC for caching jars
     string jars_cache_pvc = 7;
+    // Namespace where spark jobs are running
     string spark_jobs_namespace = 8;
+    // PVC for storing spark events
+    string spark_events_pvc = 9;
   }
   message StoreConfig {
     oneof store {

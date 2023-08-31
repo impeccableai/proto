@@ -8,6 +8,20 @@ import "proto/common/data.proto";
 import "proto/common/entities.proto";
 import "proto/common/resources.proto";
 
+enum EntityType {
+  ENTITY_TYPE_INVALID = 0;
+  ENTITY_TYPE_TASK = 1;
+  ENTITY_TYPE_DATA_SOURCE = 2;
+  ENTITY_TYPE_DRAFT = 3;
+  ENTITY_TYPE_EXPERIMENT = 4;
+  ENTITY_TYPE_RECURRING_EXPERIMENT = 5;
+  ENTITY_TYPE_USER = 6;
+  ENTITY_TYPE_ACTION = 7;
+  ENTITY_TYPE_MODEL = 8;
+  ENTITY_TYPE_SERVICE = 9;
+  ENTITY_TYPE_WORKFLOW = 10;
+}
+
 message WorkflowSpec {
   string uuid = 1;
   string name = 2 [deprecated=true];
@@ -562,6 +576,8 @@ message Draft {
   google.protobuf.Timestamp created_at = 6;
   google.protobuf.Timestamp updated_at = 7;
   repeated string tags = 8;
+  // projects uuids
+  repeated string projects = 9;
 }
 
 enum ServiceState {
@@ -591,6 +607,7 @@ message ServiceDefinition {
 message ServiceObjectMount {
   string uuid = 1;
   string mount_path = 2;
+  string sub_path = 3;
 }
 
 message Service {

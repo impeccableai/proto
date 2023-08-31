@@ -1,0 +1,69 @@
+syntax = "proto3";
+package axii;
+option go_package = "github.com/impeccableai/impeccable/proto/axii";
+
+import "google/protobuf/timestamp.proto";
+import "proto/common/request_options.proto";
+import "proto/workflow/workflow.proto";
+
+message Project {
+  string uuid = 1;
+  string name = 2;
+  string owner = 3;
+  google.protobuf.Timestamp created_at = 4;
+  google.protobuf.Timestamp updated_at = 5;
+}
+
+message CreateProjectRequest {
+  Project project = 1;
+}
+
+message CreateProjectResponse {
+  Project project = 1;
+}
+
+message GetProjectRequest {
+  string uuid = 1;
+}
+
+message GetProjectResponse {
+  Project project = 1;
+}
+
+message GetProjectsRequest {
+  message GetProjectsRequestOptions {
+    common.PaginationOptions pagination_options = 1;
+    common.OrderByOptions order_by_options = 2;
+
+    repeated common.Filter uuid = 3;
+    repeated common.Filter entity_uuid = 4;
+  }
+  string query = 1;
+  GetProjectsRequestOptions options = 2;
+}
+
+message GetProjectsResponse {
+  message ProjectResponse {
+    Project project = 1;
+    uint32 usage_count = 2;
+    float score = 3;
+  }
+  repeated ProjectResponse projects = 1;
+  common.PaginationResponse pagination_response = 2;
+}
+
+message UpdateProjectToEntityMappingsRequest {
+  string entity_uuid = 1;
+  repeated string project_uuids = 2;
+  workflow.EntityType entity_type = 3;
+}
+
+message UpdateProjectToEntityMappingsRespone {}
+
+service Projects {
+  rpc CreateProject(CreateProjectRequest) returns (CreateProjectResponse);
+  rpc GetProject(GetProjectRequest) returns (GetProjectResponse);
+  rpc GetProjects(GetProjectsRequest) returns (GetProjectsResponse);
+
+  rpc UpdateProjectToEntityMappings(UpdateProjectToEntityMappingsRequest) returns (UpdateProjectToEntityMappingsRespone);
+}
