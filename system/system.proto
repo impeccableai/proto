@@ -225,4 +225,5 @@ message KubernetesCluster {
   bool autoclean = 4;
   string namespace = 5;
   repeated string image_pull_secrets = 6;
+  string kube_config = 7;
 }
