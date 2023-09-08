@@ -35,6 +35,7 @@ message GetTasksRequest {
     repeated common.Filter updated_at = 7;
     repeated common.Filter owner = 8;
     repeated common.Filter tags = 9;
+    repeated common.Filter projects = 10;
 
     string order_by = 4;
   }
@@ -111,6 +112,7 @@ message GetDataSourcesRequest {
     repeated common.Filter updated_at = 8;
     repeated common.Filter owner = 9;
     repeated common.Filter tags = 10;
+    repeated common.Filter projects = 11;
 
     string order_by = 4;
   }
@@ -206,6 +208,8 @@ message GetDraftsRequest {
     repeated common.Filter uuid = 2;
     repeated common.Filter name = 3;
     repeated common.Filter owner = 5;
+    repeated common.Filter projects = 7;
+    repeated common.Filter tags = 8;
 
     string order_by = 4;
 
@@ -259,6 +263,7 @@ message GetExperimentsRequest {
     repeated common.Filter created_at = 10;
     repeated common.Filter updated_at = 11;
     repeated common.Filter tags = 12;
+    repeated common.Filter projects = 13;
 
     string order_by = 4;
     bool compact = 5; // omit 'big' fields

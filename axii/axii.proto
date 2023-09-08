@@ -12,6 +12,7 @@ import "proto/store/store.proto";
 message SubmitDraftRequest {
   workflow.Draft draft = 1;
   map<string, string> inputs = 2;
+  string submit_as_user = 3;
 }
 
 message SubmitDraftResponse {

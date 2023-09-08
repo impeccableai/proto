@@ -18,6 +18,8 @@ message GetContributionsDataRequest {
     repeated common.Filter date_range = 1;
     repeated common.Filter users = 2;
     repeated common.Filter tags = 3;
+    // projects uuids
+    repeated common.Filter projects = 4;
 
     TimeAggregate time_aggregate = 20;
   }
