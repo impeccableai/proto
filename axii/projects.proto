@@ -60,10 +60,24 @@ message UpdateProjectToEntityMappingsRequest {
 
 message UpdateProjectToEntityMappingsRespone {}
 
+message GetProjectToEntityMappingsRequest {
+  repeated string project_uuid = 1;
+  repeated string entity_uuid = 2;
+}
+
+message GetProjectToEntityMappingsResponse {
+  message Mapping {
+    string project_uuid = 1;
+    string entity_uuid = 2;
+  }
+  repeated Mapping mappings = 1;
+}
+
 service Projects {
   rpc CreateProject(CreateProjectRequest) returns (CreateProjectResponse);
   rpc GetProject(GetProjectRequest) returns (GetProjectResponse);
   rpc GetProjects(GetProjectsRequest) returns (GetProjectsResponse);
+  rpc GetProjectToEntityMappings(GetProjectToEntityMappingsRequest) returns (GetProjectToEntityMappingsResponse);
 
   rpc UpdateProjectToEntityMappings(UpdateProjectToEntityMappingsRequest) returns (UpdateProjectToEntityMappingsRespone);
 }

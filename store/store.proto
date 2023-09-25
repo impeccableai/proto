@@ -268,13 +268,30 @@ message GetExperimentsRequest {
     string order_by = 4;
     bool compact = 5; // omit 'big' fields
     bool fill_experiments_queue = 8;
+    bool include_projects = 14;
   }
   GetExperimentsRequestOptions options = 2;
 }
 
 message GetExperimentsResponse {
+  message ProjectToEntityMapping {
+    string project_uuid = 1;
+    string entity_uuid = 2;
+  }
   repeated workflow.Experiment experiments = 1;
   common.PaginationResponse pagination_response = 2;
+  repeated ProjectToEntityMapping projects = 3;
+}
+
+message GetExperimentsNodeStatusesRequest {
+  repeated string uuids = 1;
+}
+
+message GetExperimentsNodeStatusesResponse {
+  message NodeStatuses {
+    repeated workflow.NodeStatus node_statuses = 1;
+  }
+  map<string, NodeStatuses> experiment_node_statuses = 1;
 }
 
 message GetExperimentRequest {
@@ -511,6 +528,7 @@ service Store {
   rpc GetExperiment(GetExperimentRequest) returns (GetExperimentResponse);
   rpc GetExperimentLastSubmissionTime(GetExperimentLastSubmissionTimeRequest) returns (GetExperimentLastSubmissionTimeResponse);
   rpc GetExperiments(GetExperimentsRequest) returns (GetExperimentsResponse);
+  rpc GetExperimentsNodeStatuses(GetExperimentsNodeStatusesRequest) returns (GetExperimentsNodeStatusesResponse);
   rpc SaveExperiment(SaveExperimentRequest) returns (SaveExperimentResponse);
   rpc UpdateExperiment(UpdateExperimentRequest) returns (UpdateExperimentResponse);
 

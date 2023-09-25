@@ -218,6 +218,44 @@ message DeleteGitReposRequest {
 message DeleteGitReposResponse {
 }
 
+message CreatePersistentVolumeClaimRequest {
+  PersistentVolumeClaim pvc = 1;
+}
+
+message CreatePersistentVolumeClaimResponse {
+  PersistentVolumeClaim pvc = 1;
+}
+
+message GetPersistentVolumeClaimRequest {
+  string name = 1;
+  string cluster = 2;
+}
+
+message GetPersistentVolumeClaimResponse {
+  PersistentVolumeClaim pvc = 1;
+}
+
+message GetPersistentVolumeClaimsRequest {}
+
+message GetPersistentVolumeClaimsResponse {
+  repeated PersistentVolumeClaim pvcs = 1;
+}
+
+message UpdatePersistentVolumeClaimRequest {
+  PersistentVolumeClaim pvc = 1;
+}
+
+message UpdatePersistentVolumeClaimResponse {
+  PersistentVolumeClaim pvc = 1;
+}
+
+message DeletePersistentVolumeClaimRequest {
+  string name = 1;
+  string cluster = 2;
+}
+
+message DeletePersistentVolumeClaimResponse {}
+
 
 service System {
   rpc GetStatus(GetStatusRequest) returns (GetStatusResponse);
@@ -255,4 +293,10 @@ service System {
   rpc CreateGitRepo(CreateGitRepoRequest) returns (CreateGitRepoResponse);
   rpc UpdateGitRepo(UpdateGitRepoRequest) returns (UpdateGitRepoResponse);
   rpc DeleteGitRepos(DeleteGitReposRequest) returns (DeleteGitReposResponse);
+
+  rpc GetPersistentVolumeClaim(GetPersistentVolumeClaimRequest) returns (GetPersistentVolumeClaimResponse);
+  rpc GetPersistentVolumeClaims(GetPersistentVolumeClaimsRequest) returns (GetPersistentVolumeClaimsResponse);
+  rpc CreatePersistentVolumeClaim(CreatePersistentVolumeClaimRequest) returns (CreatePersistentVolumeClaimResponse);
+  rpc UpdatePersistentVolumeClaim(UpdatePersistentVolumeClaimRequest) returns (UpdatePersistentVolumeClaimResponse);
+  rpc DeletePersistentVolumeClaim(DeletePersistentVolumeClaimRequest) returns (DeletePersistentVolumeClaimResponse);
 }

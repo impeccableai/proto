@@ -28,6 +28,7 @@ message Config {
   repeated SparkConfig spark_configs = 3;
   repeated Cluster clusters = 4;
   repeated GitRepo git_repos = 5;
+  repeated PersistentVolumeClaim persistent_volume_claims = 6;
 }
 
 message RuntimeEnvironment {
@@ -59,7 +60,8 @@ message Store {
   StoreParams params = 3;
   bool local = 4;
   bool default = 5;
-  // In which cluster store is available. If empty, then store is available in all clusters.
+  // In which cluster store is available. If empty, then store is available in
+  // all clusters.
   string cluster = 6;
 
   // If non-zero, it means that store has limited space
@@ -75,18 +77,14 @@ message StoreParams {
 }
 
 message FSStoreParams {
-  string root = 1 [deprecated = true];
+  string root = 1 [ deprecated = true ];
   bool archive_dirs = 2;
   oneof backend {
     KubernetesVolume kubernetes_volume = 3;
     //    DockerVolume docker_volume = 4;
   }
-  message LocalFileSystem {
-    string root = 1;
-  }
-  message RemoteFileSystem {
-    string address = 1;
-  }
+  message LocalFileSystem { string root = 1; }
+  message RemoteFileSystem { string address = 1; }
   oneof config {
     LocalFileSystem local_fs = 5;
     RemoteFileSystem remote_fs = 6;
@@ -108,7 +106,7 @@ message SecretParamRef {
 message S3StoreParams {
   string endpoint = 1;
   string access_key = 2;
-  SecretParamRef secret_key_ref = 7 [deprecated = true];
+  SecretParamRef secret_key_ref = 7 [ deprecated = true ];
   common.EnvValue secret_key = 8;
   bool use_ssl = 4;
 
@@ -173,7 +171,7 @@ enum LocalInventoryMode {
 enum ClusterType {
   CLUSTER_TYPE_INVALID = 0;
   CLUSTER_TYPE_KUBERNETES = 1;
-//  CLUSTER_TYPE_DOCKER = 2;
+  //  CLUSTER_TYPE_DOCKER = 2;
 }
 
 enum ClusterDataMode {
@@ -193,9 +191,7 @@ message Cluster {
 }
 
 message ClusterBackend {
-  oneof backend {
-    KubernetesCluster kubernetes_cluster = 1;
-  }
+  oneof backend { KubernetesCluster kubernetes_cluster = 1; }
 }
 
 message LocalInventoryConfig {
@@ -226,4 +222,10 @@ message KubernetesCluster {
   string namespace = 5;
   repeated string image_pull_secrets = 6;
   string kube_config = 7;
+}
+
+message PersistentVolumeClaim {
+  string name = 1;
+  string size = 2;
+  string cluster = 3;
 }
