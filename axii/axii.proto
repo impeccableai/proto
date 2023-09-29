@@ -219,6 +219,14 @@ message ValidateTaskResponse {
   repeated common.ValidationMessage messages = 1;
 }
 
+message ValidateUpdateTaskRequest {
+  workflow.Task task = 1;
+}
+
+message ValidateUpdateTaskResponse {
+  repeated common.ValidationMessage messages = 1;
+}
+
 message ValidateDataSourceRequest {
   workflow.DataSource data_source = 1;
 }
@@ -260,6 +268,7 @@ service Axii {
 
   rpc ValidateDraft(ValidateDraftRequest) returns (ValidateDraftResponse);
   rpc ValidateTask(ValidateTaskRequest) returns (ValidateTaskResponse);
+  rpc ValidateUpdateTask(ValidateUpdateTaskRequest) returns (ValidateUpdateTaskResponse);
   rpc ValidateDataSource(ValidateDataSourceRequest) returns (ValidateDataSourceResponse);
 
   rpc Import(ImportRequest) returns (ImportResponse);
