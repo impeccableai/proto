@@ -143,6 +143,8 @@ message SparkConfig {
     string spark_jobs_namespace = 8;
     // PVC for storing spark events
     string spark_events_pvc = 9;
+    // clusters where spark is available
+    string cluster = 10;
   }
   message StoreConfig {
     oneof store {
