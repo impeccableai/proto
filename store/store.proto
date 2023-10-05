@@ -305,6 +305,7 @@ message GetExperimentResponse {
   repeated workflow.Artifact artifacts = 2;
   workflow.Experiment experiment = 3;
   workflow.WorkflowTemplate template = 4;
+  repeated string projects = 5; // project uuids
 }
 
 message SaveExperimentRequest {

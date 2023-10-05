@@ -39,6 +39,28 @@ message GetContributionsDataResponse {
   repeated Entry artifacts = 4;
 }
 
+message GetImpactChartDataRequest {
+  message GetImpactChartDataRequestOptions {
+    repeated common.Filter users = 1;
+  }
+  GetImpactChartDataRequestOptions options = 1;
+}
+
+message GetImpactChartDataResponse {
+  message ImpactChartData {
+    double individual_contributions = 1;
+    double leveraging_others_work = 2;
+    double contributing_to_others = 3;
+  }
+  message Entry {
+    string user = 1;
+    ImpactChartData impact_data = 2;
+  }
+  repeated Entry data = 1;
+  ImpactChartData median_data = 2;
+}
+
 service DashboardBackend {
   rpc GetContributionsData(GetContributionsDataRequest) returns (GetContributionsDataResponse);
+  rpc GetImpactChartData(GetImpactChartDataRequest) returns (GetImpactChartDataResponse);
 }

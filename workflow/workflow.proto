@@ -497,6 +497,7 @@ message WorkflowTemplate {
 
   google.protobuf.Timestamp created_at = 4;
   string parent_experiment_uuid = 5;
+  string owner = 6;
 }
 
 message Workflow {
@@ -548,6 +549,7 @@ message Experiment {
   ExtendedState extended_state = 13;
   // type and identifier of entity that triggered the experiment in format <type>/<uuid/email>
   string triggered_by = 14;
+  string parent_draft_uuid = 15;
 }
 
 message RecurringExperiment {
@@ -578,6 +580,7 @@ message Draft {
   repeated string tags = 8;
   // projects uuids
   repeated string projects = 9;
+  google.protobuf.Timestamp deleted_at = 10;
 }
 
 enum ServiceState {
