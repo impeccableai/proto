@@ -171,6 +171,16 @@ message Task {
     TASK_STATE_DISABLED = 3;
     TASK_STATE_WIP = 4;
   }
+
+  enum TaskType {
+    TASK_TYPE_INVALID = 0;
+    TASK_TYPE_PYTHON_SCRIPT = 1;
+    TASK_TYPE_EXECUTABLE = 2;
+    TASK_TYPE_CONTAINER = 3;
+    TASK_TYPE_SPARK_JOB = 4;
+    TASK_TYPE_SQL = 5;
+  }
+
   string uuid = 1;
   string name = 2;
 
@@ -181,6 +191,7 @@ message Task {
     SparkJob spark_job = 20;
     SQL sql = 21;
   }
+
   reserved 6;
 
   repeated DataIO inputs = 7;
