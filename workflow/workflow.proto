@@ -223,10 +223,20 @@ message Runtime {
   reserved 10 to 20; // reserved for task-specific runtimes
   map<string, string> environment_variables = 3 [deprecated = true];
   Resources resources = 4 [deprecated = true]; // use advanced_resources instead
-  map<string, common.EnvValue> new_environment_variables = 7;
+
+  message EnvironmentVariableListItem {
+    string name = 1;
+    common.EnvValue value = 2;
+  }
+  repeated EnvironmentVariableListItem new_environment_variables = 7;
   repeated common.ConfigSetRef config_sets = 8;
   AdvancedResources advanced_resources = 21;
-  map<string, common.Parameter> new_parameters = 22;
+
+  message ParametersListItem {
+    string name = 1;
+    common.Parameter value = 2;
+  }
+  repeated ParametersListItem new_parameters = 22;
   repeated SecretMount secret_mounts = 23;
   repeated int32 ports = 24;
 }
@@ -500,7 +510,11 @@ message Model {
 
 message WorkflowTemplate {
   message Parameters {
-    map<string, string> parameters = 1;
+    message ParametersListItem {
+      string name = 1;
+      string value = 2;
+    }
+    repeated ParametersListItem parameters = 1;
   }
   string uuid = 1;
   WorkflowSpec workflow = 2; // might have unevaluated parameters
@@ -648,7 +662,11 @@ message ServiceContainerDefinition {
   repeated string args = 4;
   repeated ServiceVolume volumes = 5;
   repeated Endpoint endpoints = 6;
-  map<string, string> parameters = 7;
+  message ParametersListItem {
+    string name = 1;
+    string value = 2;
+  }
+  repeated ParametersListItem parameters = 7;
   repeated File files = 8;
 }
 
@@ -677,8 +695,16 @@ message TaskExtension {
   string name = 1;
   repeated DataIO additional_inputs = 2;
   repeated DataIO additional_outputs = 3;
-  map<string, common.EnvValue> additional_environment_variables = 4;
-  map<string, string> additional_parameters = 5;
+  message EnvironmentVariableListItem {
+    string name = 1;
+    common.EnvValue value = 2;
+  }
+  repeated EnvironmentVariableListItem additional_environment_variables = 4;
+  message ParametersListItem {
+    string name = 1;
+    string value = 2;
+  }
+  repeated ParametersListItem additional_parameters = 5;
 
   map<string, common.RuntimeEnvironmentRef> input_runtime_environments = 6;
   map<string, common.RuntimeEnvironmentRef> output_runtime_environments = 7;

@@ -21,7 +21,11 @@ message Parameter {
 message ConfigSet {
   string uuid = 1;
   string name = 2;
-  map<string, EnvValue> environment_variables = 3;
+  message EnvironmentVariableListItem {
+    string name = 1;
+    EnvValue value = 2;
+  }
+  repeated EnvironmentVariableListItem environment_variables = 3;
   google.protobuf.Timestamp created_at = 4;
   //  map<string, MountValue> extra_mounts = 5;
 }
