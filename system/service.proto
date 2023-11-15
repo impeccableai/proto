@@ -6,6 +6,7 @@ import "proto/system/system.proto";
 import "proto/system/git.proto";
 import "proto/common/resources.proto";
 import "proto/common/status.proto";
+import "proto/common/request_options.proto";
 
 message GetStatusRequest {}
 
@@ -56,7 +57,12 @@ message CreateStoreResponse {
 }
 
 message GetStoresRequest {
-  bool with_local = 1;
+  message Options {
+    repeated common.Filter uuid = 1;
+    repeated common.Filter backend_type = 2;
+    repeated common.Filter cluster_uuid = 3;
+  }
+  Options options = 1;
 }
 
 message GetStoresResponse {
@@ -72,7 +78,7 @@ message UpdateStoreResponse {
 }
 
 message DeleteStoreRequest {
-  string name = 1;
+  string uuid = 1;
 }
 
 message DeleteStoreResponse {
@@ -86,7 +92,13 @@ message CreateClusterResponse {
   Cluster cluster = 1;
 }
 
-message GetClustersRequest {}
+message GetClustersRequest {
+  message Options {
+    repeated common.Filter uuid = 1;
+    repeated common.Filter backend_type = 2;
+  }
+  Options options = 1;
+}
 
 message GetClustersResponse {
   repeated Cluster clusters = 1;
@@ -101,7 +113,7 @@ message UpdateClusterResponse {
 }
 
 message DeleteClusterRequest {
-  string name = 1;
+  string uuid = 1;
 }
 
 message DeleteClusterResponse {
@@ -113,32 +125,30 @@ message GetSparkConfigsRequest {
 }
 
 message GetSparkConfigsResponse {
-  repeated SparkConfig spark_configs = 1;
+  repeated Spark spark_configs = 1;
 }
 
 message CreateSparkConfigRequest {
-  SparkConfig spark_config = 1;
+  Spark spark_config = 1;
 }
 
 message CreateSparkConfigResponse {
-  SparkConfig spark_config = 1;
+  Spark spark_config = 1;
 }
 
 message UpdateSparkConfigRequest {
-  SparkConfig spark_config = 1;
+  Spark spark_config = 1;
 }
 
 message UpdateSparkConfigResponse {
-  SparkConfig spark_config = 1;
+  Spark spark_config = 1;
 }
 
 message DeleteSparkConfigRequest {
-  string name = 1;
+  string uuid = 1;
 }
 
-message DeleteSparkConfigResponse {
-
-}
+message DeleteSparkConfigResponse {}
 
 message GetConfigRequest {}
 

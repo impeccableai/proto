@@ -7,6 +7,8 @@ import "proto/common/entities.proto";
 import "proto/common/status.proto";
 import "proto/system/git.proto";
 
+import "google/protobuf/timestamp.proto";
+
 message Status {
   common.Status auth = 1;
   common.Status axii_backend = 2;
@@ -23,12 +25,11 @@ message Status {
 }
 
 message Config {
-  repeated Store stores = 1;
-  repeated RuntimeEnvironment runtime_environments = 2;
-  repeated SparkConfig spark_configs = 3;
-  repeated Cluster clusters = 4;
-  repeated GitRepo git_repos = 5;
-  repeated PersistentVolumeClaim persistent_volume_claims = 6;
+  repeated Cluster clusters = 1;
+  repeated Store stores = 2;
+  repeated common.NamedResources named_resources = 3;
+  repeated GitRepo git_repos = 4;
+  repeated Spark spark = 5;
 }
 
 message RuntimeEnvironment {
@@ -48,35 +49,99 @@ message RuntimeEnvironment {
 }
 
 message Store {
-  string name = 1;
+  message Backend {
+    enum Type {
+      TYPE_INVALID = 0;
+      TYPE_IN_CLUSTER = 1;
+      TYPE_S3 = 2;
+      TYPE_GCS = 3;
+      TYPE_MEMORY = 4;
+    }
+    oneof backend {
+      InCluster in_cluster = 1;
+      S3Store s3 = 2;
+      GCSStore gcs = 3;
+      // Memory should be used for testing only
+      Memory memory = 4;
+    }
+  }
+  message InCluster {
+    enum Type {
+      INVALID = 0;
+      KUBE = 1;
+      // DOCKER = 2;
+    }
+    message Kube {
+      ManagedKubePersistentVolumeClaim pvc = 1;
+      bool use_node_cache = 2;
+    }
+    message Docker {}
+
+    string cluster_uuid = 1;
+    oneof engine {
+      Kube kube = 2;
+      // Docker docker_store = 3;
+    }
+    reserved 4 to 9;
+
+    string root = 10;
+    // if RemoteFS is installed on cluster this would be address to connect to.
+    string remote_address = 11;
+  }
+
+  message Memory {}
+
+  message S3Store {
+    string endpoint = 1;
+    string access_key = 2;
+    SecretParamRef secret_key_ref = 7 [ deprecated = true ];
+    common.EnvValue secret_key = 8;
+    bool use_ssl = 4;
+
+    string region = 5;
+    string bucket = 6;
+  }
+
+  message GCSStore {
+    string bucket = 1;
+    common.SecretRef google_app_creds = 2;
+  }
+
   enum Type {
+    option deprecated = true;
     STORE_TYPE_INVALID = 0;
     FILE_SYSTEM = 1;
     S3 = 2;
     MEMORY = 3; // only for tests
     GCS = 4;
   }
-  Type type = 2;
-  StoreParams params = 3;
-  bool local = 4;
-  bool default = 5;
+
+  string uuid = 11;
+  string name = 1;
+  Type type = 2 [ deprecated = true ];
+  StoreParams params = 3 [ deprecated = true ];
+  Backend backend = 8;
+
+  bool local = 4 [ deprecated = true ];
+  bool default = 5 [ deprecated = true ];
   // In which cluster store is available. If empty, then store is available in
   // all clusters.
-  string cluster = 6;
+  string cluster = 6 [ deprecated = true ];
 
   // If non-zero, it means that store has limited space
-  uint64 max_bytes = 7;
+  uint64 max_bytes = 7 [ deprecated = true ];
 }
 
 message StoreParams {
   oneof params {
-    FSStoreParams fs_store_params = 1;
+    FSStoreParams fs_store_params = 1 [ deprecated = true ];
     S3StoreParams s3_store_params = 2;
     GCSStoreParams gcs_store_params = 3;
   }
 }
 
 message FSStoreParams {
+  option deprecated = true;
   string root = 1 [ deprecated = true ];
   bool archive_dirs = 2;
   oneof backend {
@@ -120,6 +185,8 @@ message GCSStoreParams {
 }
 
 message SparkConfig {
+  option deprecated = true;
+
   message EventLogConfig {
     bool event_log_enabled = 1;
     string event_log_dir = 2;
@@ -163,6 +230,39 @@ message SparkConfig {
   bool default = 6;
 }
 
+message Spark {
+  message Backend {
+    enum Type {
+      TYPE_INVALID = 0;
+      TYPE_KUBERNETES_OPERATOR = 1;
+      TYPE_KUBERNETES_NATIVE = 2;
+      TYPE_YARN = 3;
+    }
+    oneof backend {
+      KubeOperator kube_operator = 1;
+      // KubeRaw kube_raw = 2;
+      // Yarn yarn = 3;
+    }
+  }
+  message Yarn {}
+  message KubeRaw { string master_address = 1; }
+  message KubeOperator {
+    // Namespace where spark jobs are running
+    string spark_jobs_namespace = 1;
+    // Service account for running spark jobs
+    string service_account_name = 2;
+    // PVC for caching jars
+    KubePersistentVolumeClaim jars_cache = 3;
+    // PVC for storing spark events
+    KubePersistentVolumeClaim spark_events = 4;
+  }
+
+  string uuid = 1;
+  string name = 2;
+  Backend backend = 3;
+  string cluster_uuid = 4;
+}
+
 enum LocalInventoryMode {
   INVENTORY_MODE_INVALID = 0;
   INVENTORY_MODE_NONE = 1;
@@ -184,16 +284,59 @@ enum ClusterDataMode {
 }
 
 message Cluster {
-  string name = 1;
-  ClusterType type = 2;
-  bool default = 3;
-  LocalInventoryConfig local_inventory_config = 4;
-  ClusterDataMode data_mode = 5;
-  ClusterBackend backend = 6;
-}
+  message Backend {
+    enum Type {
+      UNKNOWN = 0;
+      KUBERNETES = 1;
+    }
+    oneof backend {
+      Kube kube = 1;
+      // Docker docker = 2;
+    }
+  }
+  message Kube {
+    message Status {}
 
-message ClusterBackend {
-  oneof backend { KubernetesCluster kubernetes_cluster = 1; }
+    message Config {
+      bool local = 1;
+      string kube_config = 2;
+    }
+
+    Config config = 1;
+    string namespace = 3;
+    repeated string image_pull_secrets = 4;
+    string address = 5;
+    bool autoclean = 6;
+
+    // readonly
+    Kube.Status status = 100;
+  }
+
+  message Docker {}
+
+  // Status of the cluster
+  message Status {
+    // TODO
+    // State state = 1;
+    // Usage usage = 2;
+
+    repeated Store stores = 10;
+    repeated Spark sparks = 11;
+  }
+
+  string uuid = 1;
+  string name = 2;
+  bool default = 3;
+  Backend backend = 4;
+
+  google.protobuf.Timestamp created_at = 5;
+  google.protobuf.Timestamp updated_at = 6;
+
+  string default_store_uuid = 7;
+  string default_spark_uuid = 9;
+
+  // readonly
+  Status status = 100;
 }
 
 message LocalInventoryConfig {
@@ -224,6 +367,28 @@ message KubernetesCluster {
   string namespace = 5;
   repeated string image_pull_secrets = 6;
   string kube_config = 7;
+}
+
+message KubePersistentVolumeClaim {
+  enum Type {
+    TYPE_INVALID = 0;
+    TYPE_MANAGED = 1;
+    TYPE_EXISTING = 2;
+  }
+  oneof pvc {
+    ManagedKubePersistentVolumeClaim managed = 1;
+    ExistingKubePersistentVolumeClaim existing = 2;
+  }
+}
+
+message ManagedKubePersistentVolumeClaim {
+  string name = 1;
+  int64 size = 2;
+  string storage_class = 3;
+}
+
+message ExistingKubePersistentVolumeClaim {
+  string name = 1;
 }
 
 message PersistentVolumeClaim {

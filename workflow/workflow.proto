@@ -24,16 +24,18 @@ enum EntityType {
 
 message WorkflowSpec {
   string uuid = 1;
-  string name = 2 [deprecated=true];
+  string name = 2 [deprecated = true];
 
   repeated Node nodes = 3;
   repeated Edge edges = 4;
 
-  google.protobuf.Timestamp created_at = 5 [deprecated=true];
-  google.protobuf.Timestamp updated_at = 6 [deprecated=true];
-  string parent_experiment_uuid = 7 [deprecated=true];
-  string owner = 8 [deprecated=true];
+  google.protobuf.Timestamp created_at = 5 [deprecated = true];
+  google.protobuf.Timestamp updated_at = 6 [deprecated = true];
+  string parent_experiment_uuid = 7 [deprecated = true];
+  string owner = 8 [deprecated = true];
   string runtime_environment = 9;
+
+  ExecutionEnvironmentSelectors execution_environment_selectors = 10;
 }
 
 message Node {
@@ -73,10 +75,12 @@ message ControlStatement {
 }
 
 message NodeRuntimeEnvironment {
-  string runtime_environment = 1;
+  string runtime_environment = 1 [deprecated = true];
   map<string, common.RuntimeEnvironmentRef> input_runtime_environments = 2;
   map<string, common.RuntimeEnvironmentRef> output_runtime_environments = 3;
-  string spark_config = 4;
+  string spark_config = 4 [deprecated = true];
+
+  ExecutionEnvironmentSelectors execution_environment_selectors = 5;
 }
 
 message Edge {
@@ -105,7 +109,6 @@ message DataSource {
   DataSourceState state = 9;
   google.protobuf.Timestamp updated_at = 10;
   string parent_experiment_uuid = 11;
-
 }
 
 message Action {
@@ -409,7 +412,7 @@ enum ExperimentState {
 }
 
 message ExperimentFullStatus {
-  string workflow_uuid = 1 [deprecated=true];
+  string workflow_uuid = 1 [deprecated = true];
   string experiment_uuid = 2;
   ExperimentState state = 3;
   repeated NodeStatus node_statuses = 4;
@@ -428,7 +431,7 @@ message NodeStatus {
   string node_uuid = 1;
   string experiment_uuid = 8;
   NodeState state = 2;
-  string task_hash = 3 [deprecated=true];
+  string task_hash = 3 [deprecated = true];
   google.protobuf.Timestamp started_at = 4;
   google.protobuf.Timestamp finished_at = 5;
   oneof status {
@@ -647,6 +650,8 @@ message Service {
 
   google.protobuf.Timestamp created_at = 5;
   google.protobuf.Timestamp updated_at = 6;
+
+  ExecutionEnvironmentSelectors execution_environment_selectors = 7;
 }
 
 message ServiceRuntimeEnvironment {
@@ -708,4 +713,27 @@ message TaskExtension {
 
   map<string, common.RuntimeEnvironmentRef> input_runtime_environments = 6;
   map<string, common.RuntimeEnvironmentRef> output_runtime_environments = 7;
+}
+
+message ExecutionEnvironmentSelectors {
+  repeated ExecutionEnvironmentSelector selectors = 1;
+}
+
+message ExecutionEnvironmentSelector {
+  enum Type {
+    TYPE_INVALID = 0;
+    TYPE_CLUSTER = 1;
+    TYPE_STORE = 2;
+    TYPE_SPARK = 3;
+  }
+  message ClusterRequirement {
+    // exact cluster requirement
+    string cluster_uuid = 1;
+  }
+  message StoreRequirement {}
+  message SparkRequirement {}
+  oneof selector {
+    ClusterRequirement cluster_requirement = 1;
+    SparkRequirement spark_requirement = 2;
+  }
 }

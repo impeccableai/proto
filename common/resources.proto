@@ -14,4 +14,5 @@ message Resources {
 message NamedResources {
   string name = 1;
   Resources resources = 2;
+  bool default = 3;
 }
