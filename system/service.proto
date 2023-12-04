@@ -69,6 +69,14 @@ message GetStoresResponse {
   repeated Store stores = 1;
 }
 
+message GetStoreRequest {
+  string uuid = 1;
+}
+
+message GetStoreResponse {
+  Store store = 1;
+}
+
 message UpdateStoreRequest {
   Store store = 1;
 }
@@ -98,10 +106,19 @@ message GetClustersRequest {
     repeated common.Filter backend_type = 2;
   }
   Options options = 1;
+  bool with_status = 2;
 }
 
 message GetClustersResponse {
   repeated Cluster clusters = 1;
+}
+
+message GetClusterRequest {
+  string uuid = 1;
+}
+
+message GetClusterResponse {
+  Cluster cluster = 1;
 }
 
 message UpdateClusterRequest {
@@ -126,6 +143,14 @@ message GetSparkConfigsRequest {
 
 message GetSparkConfigsResponse {
   repeated Spark spark_configs = 1;
+}
+
+message GetSparkConfigRequest {
+  string uuid = 1;
+}
+
+message GetSparkConfigResponse {
+  Spark spark = 1;
 }
 
 message CreateSparkConfigRequest {
@@ -282,16 +307,19 @@ service System {
 
   rpc CreateStore(CreateStoreRequest) returns (CreateStoreResponse);
   rpc GetStores(GetStoresRequest) returns (GetStoresResponse);
+  rpc GetStore(GetStoreRequest) returns (GetStoreResponse);
   rpc UpdateStore(UpdateStoreRequest) returns (UpdateStoreResponse);
   rpc DeleteStore(DeleteStoreRequest) returns (DeleteStoreResponse);
 
   rpc CreateCluster(CreateClusterRequest) returns (CreateClusterResponse);
   rpc GetClusters(GetClustersRequest) returns (GetClustersResponse);
+  rpc GetCluster(GetClusterRequest) returns (GetClusterResponse);
   rpc UpdateCluster(UpdateClusterRequest) returns (UpdateClusterResponse);
   rpc DeleteCluster(DeleteClusterRequest) returns (DeleteClusterResponse);
 
   rpc CreateSparkConfig(CreateSparkConfigRequest) returns (CreateSparkConfigResponse);
   rpc GetSparkConfigs(GetSparkConfigsRequest) returns (GetSparkConfigsResponse);
+  rpc GetSparkConfig(GetSparkConfigRequest) returns (GetSparkConfigResponse);
   rpc UpdateSparkConfig(UpdateSparkConfigRequest) returns (UpdateSparkConfigResponse);
   rpc DeleteSparkConfig(DeleteSparkConfigRequest) returns (DeleteSparkConfigResponse);
 

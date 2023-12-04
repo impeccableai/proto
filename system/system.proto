@@ -316,9 +316,16 @@ message Cluster {
 
   // Status of the cluster
   message Status {
-    // TODO
-    // State state = 1;
-    // Usage usage = 2;
+    enum State {
+      INVALID = 0;
+      OK = 1;
+      UNKNOWN = 2;
+      ERROR = 3;
+    }
+
+    State state = 1;
+    common.ClusterResources resources = 2;
+    bool cluster_autoscaling = 3;
 
     repeated Store stores = 10;
     repeated Spark sparks = 11;

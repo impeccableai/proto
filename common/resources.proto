@@ -16,3 +16,16 @@ message NamedResources {
   Resources resources = 2;
   bool default = 3;
 }
+
+message ClusterResource {
+  int64 usage = 1;
+  int64 request = 2;
+  int64 limit = 3;
+  int64 total = 4;
+}
+
+message ClusterResources {
+  ClusterResource cpu = 1;
+  ClusterResource memory = 2;
+  ClusterResource gpu = 3;
+}
