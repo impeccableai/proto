@@ -294,6 +294,21 @@ message GetExperimentsNodeStatusesResponse {
   map<string, NodeStatuses> experiment_node_statuses = 1;
 }
 
+message GetNodeStatusesRequest {
+  message GetNodeStatusesRequestOptions {
+    repeated common.Filter uuid = 1;
+    repeated common.Filter experiment_uuid = 2;
+    repeated common.Filter cluster_uuid = 3;
+    repeated common.Filter cluster_node_name = 5;
+    repeated common.Filter state = 4;
+  }
+  GetNodeStatusesRequestOptions options = 1;
+}
+
+message GetNodeStatusesResponse {
+  repeated workflow.NodeStatus node_statuses = 1;
+}
+
 message GetExperimentRequest {
   string experiment_uuid = 1;
   bool fill_artifacts = 2;
@@ -529,9 +544,11 @@ service Store {
   rpc GetExperiment(GetExperimentRequest) returns (GetExperimentResponse);
   rpc GetExperimentLastSubmissionTime(GetExperimentLastSubmissionTimeRequest) returns (GetExperimentLastSubmissionTimeResponse);
   rpc GetExperiments(GetExperimentsRequest) returns (GetExperimentsResponse);
-  rpc GetExperimentsNodeStatuses(GetExperimentsNodeStatusesRequest) returns (GetExperimentsNodeStatusesResponse);
   rpc SaveExperiment(SaveExperimentRequest) returns (SaveExperimentResponse);
   rpc UpdateExperiment(UpdateExperimentRequest) returns (UpdateExperimentResponse);
+
+  rpc GetExperimentsNodeStatuses(GetExperimentsNodeStatusesRequest) returns (GetExperimentsNodeStatusesResponse);
+  rpc GetNodeStatuses(GetNodeStatusesRequest) returns (GetNodeStatusesResponse);
 
   rpc GetWorkflowTemplate(GetWorkflowTemplateRequest) returns (GetWorkflowTemplateResponse);
   rpc SaveWorkflowTemplate(SaveWorkflowTemplateRequest) returns (SaveWorkflowTemplateResponse);

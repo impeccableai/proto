@@ -115,6 +115,7 @@ message GetClustersResponse {
 
 message GetClusterRequest {
   string uuid = 1;
+  bool with_status = 2;
 }
 
 message GetClusterResponse {

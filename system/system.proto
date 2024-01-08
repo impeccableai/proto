@@ -316,6 +316,12 @@ message Cluster {
 
   // Status of the cluster
   message Status {
+    message NodeStatus {
+      string name = 1;
+      State state = 2;
+      common.ClusterResources resources = 3;
+    }
+
     enum State {
       INVALID = 0;
       OK = 1;
@@ -325,7 +331,8 @@ message Cluster {
 
     State state = 1;
     common.ClusterResources resources = 2;
-    bool cluster_autoscaling = 3;
+    repeated NodeStatus nodes = 3;
+    bool cluster_autoscaling = 4;
 
     repeated Store stores = 10;
     repeated Spark sparks = 11;

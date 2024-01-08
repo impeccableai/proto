@@ -428,18 +428,25 @@ message ExperimentStatus {
 }
 
 message NodeStatus {
-  string node_uuid = 1;
-  string experiment_uuid = 8;
-  NodeState state = 2;
-  string task_hash = 3 [deprecated = true];
-  google.protobuf.Timestamp started_at = 4;
-  google.protobuf.Timestamp finished_at = 5;
-  oneof status {
-    TaskStatus task_status = 6;
-    ActionStatus action_status = 7;
-    WorkflowStatus workflow_status = 9;
-    WorkflowIOStatus workflow_io_status = 10;
+  message Metadata {
+    string name = 1;
   }
+  string node_uuid = 1;
+  string experiment_uuid = 2;
+  Metadata metadata = 3;
+
+  NodeState state = 4;
+
+  google.protobuf.Timestamp started_at = 5;
+  google.protobuf.Timestamp finished_at = 6;
+
+  oneof status {
+    TaskStatus task_status = 11;
+    ActionStatus action_status = 12;
+    WorkflowStatus workflow_status = 13;
+    WorkflowIOStatus workflow_io_status = 14;
+  }
+  reserved 15 to 20;
 }
 
 message NodeStatusRecord {
@@ -454,12 +461,19 @@ message NodeStatuses {
 }
 
 message TaskStatus {
+  message ExecutionStatus {
+    string cluster_uuid = 1;
+    common.ClusterResources resources = 2;
+    string cluster_node_name = 3;
+  }
+
   string task_hash = 1;
   reserved 2, 3;
   google.protobuf.Timestamp started_at = 4;
   google.protobuf.Timestamp finished_at = 5;
 
   repeated common.NamedAddress addresses = 6;
+  ExecutionStatus execution_status = 7;
 }
 
 message ActionStatus {
