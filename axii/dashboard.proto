@@ -70,7 +70,7 @@ message GetSystemUsageRequest {
   GetSystemUsageRequestOptions options = 1;
 }
 
-// all units are seconds[cpu|gpu]
+// all units are millis[cpu|gpu]
 message SystemUsageComputationsResponse {
   uint64 wall_clock_time_cpu = 1;
   uint64 wall_clock_time_gpu = 2;
