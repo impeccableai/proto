@@ -292,6 +292,19 @@ message DeletePersistentVolumeClaimRequest {
 
 message DeletePersistentVolumeClaimResponse {}
 
+message GetManagedVolumesRequest {}
+
+message GetManagedVolumesResponse {
+  repeated ManagedVolume managed_volumes = 1;
+}
+
+message DeleteManagedVolumeRequest {
+  string uuid = 1;
+  string cluster = 2;
+}
+
+message DeleteManagedVolumeResponse {}
+
 
 service System {
   rpc GetStatus(GetStatusRequest) returns (GetStatusResponse);
@@ -338,4 +351,7 @@ service System {
   rpc CreatePersistentVolumeClaim(CreatePersistentVolumeClaimRequest) returns (CreatePersistentVolumeClaimResponse);
   rpc UpdatePersistentVolumeClaim(UpdatePersistentVolumeClaimRequest) returns (UpdatePersistentVolumeClaimResponse);
   rpc DeletePersistentVolumeClaim(DeletePersistentVolumeClaimRequest) returns (DeletePersistentVolumeClaimResponse);
+
+  rpc GetManagedVolumes(GetManagedVolumesRequest) returns (GetManagedVolumesResponse);
+  rpc DeleteManagedVolume(DeleteManagedVolumeRequest) returns (DeleteManagedVolumeResponse);
 }

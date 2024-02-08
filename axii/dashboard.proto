@@ -4,6 +4,7 @@ option go_package = "github.com/impeccableai/impeccable/proto/axii";
 
 import "google/protobuf/timestamp.proto";
 import "proto/common/request_options.proto";
+import "proto/workflow/workflow.proto";
 
 message GetContributionsDataRequest {
   message GetContributionsDataRequestOptions {
@@ -60,7 +61,68 @@ message GetImpactChartDataResponse {
   ImpactChartData median_data = 2;
 }
 
+message GetSystemUsageRequest {
+  message GetSystemUsageRequestOptions {
+    repeated common.Filter date_start = 1;
+    repeated common.Filter date_end = 2;
+  }
+
+  GetSystemUsageRequestOptions options = 1;
+}
+
+// all units are seconds[cpu|gpu]
+message SystemUsageComputationsResponse {
+  uint64 wall_clock_time_cpu = 1;
+  uint64 wall_clock_time_gpu = 2;
+
+  uint64 wall_clock_time_saved_cpu = 3;
+  uint64 wall_clock_time_saved_gpu = 4;
+
+  uint64 hardware_time_cpu = 5;
+  uint64 hardware_time_gpu = 6;
+
+  uint64 hardware_time_saved_cpu = 7;
+  uint64 hardware_time_saved_gpu = 8;
+}
+
+message SystemUsageExperimentsResponse {
+  message Entry {
+    google.protobuf.Timestamp timestamp = 1;
+    uint64 success_count = 2;
+    uint64 fail_count = 3;
+  }
+  repeated Entry entries = 1;
+
+  message CountEntry {
+    workflow.ExperimentState key = 1;
+    uint64 value = 2;
+  }
+  repeated CountEntry counts = 2;
+}
+
+message SystemUsageNodesResponse {
+  message Entry {
+    google.protobuf.Timestamp timestamp = 1;
+    uint64 done = 2;
+    uint64 already_done = 3;
+  }
+  repeated Entry entries = 1;
+
+  message CountEntry {
+    workflow.NodeState key = 1;
+    uint64 value = 2;
+  }
+  repeated CountEntry counts = 2;
+}
+
+message GetSystemUsageResponse {
+  SystemUsageComputationsResponse computations_response = 1;
+  SystemUsageExperimentsResponse experiments_response = 2;
+  SystemUsageNodesResponse nodes_response = 4;
+}
+
 service DashboardBackend {
   rpc GetContributionsData(GetContributionsDataRequest) returns (GetContributionsDataResponse);
   rpc GetImpactChartData(GetImpactChartDataRequest) returns (GetImpactChartDataResponse);
+  rpc GetSystemUsageData(GetSystemUsageRequest) returns (GetSystemUsageResponse);
 }
