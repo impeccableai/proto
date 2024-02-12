@@ -592,6 +592,8 @@ message Experiment {
   // type and identifier of entity that triggered the experiment in format <type>/<uuid/email>
   string triggered_by = 14;
   string parent_draft_uuid = 15;
+  google.protobuf.Timestamp started_at = 16;
+  google.protobuf.Timestamp finished_at = 17;
 }
 
 message RecurringExperiment {

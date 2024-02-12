@@ -264,6 +264,8 @@ message GetExperimentsRequest {
     repeated common.Filter updated_at = 11;
     repeated common.Filter tags = 12;
     repeated common.Filter projects = 13;
+    repeated common.Filter started_at = 15;
+    repeated common.Filter finished_at = 16;
 
     string order_by = 4;
     bool compact = 5; // omit 'big' fields
