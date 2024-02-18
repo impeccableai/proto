@@ -33,6 +33,8 @@ message GetContributionsDataResponse {
   message Entry {
     google.protobuf.Timestamp timestamp = 1;
     int32 count = 2;
+    string user = 3;
+    repeated string projects = 4;
   }
   repeated Entry data_sources = 1;
   repeated Entry tasks = 2;
@@ -65,6 +67,8 @@ message GetSystemUsageRequest {
   message GetSystemUsageRequestOptions {
     repeated common.Filter date_start = 1;
     repeated common.Filter date_end = 2;
+    // projects uuids
+    repeated common.Filter projects = 3;
   }
 
   GetSystemUsageRequestOptions options = 1;
