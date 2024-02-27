@@ -145,6 +145,13 @@ message SubmitWorkflowRequest {
   repeated string tags = 5;
 }
 
+message SubmitWorkflowsRequest {
+  string template_name = 1;
+  string template_version = 2;
+  repeated workflow.WorkflowTemplate.Parameters parameters = 3;
+  map<string, string> inputs = 4;
+  repeated string tags = 5;}
+
 message SubmitSubWorkflowRequest {
   SubmitWorkflowRequest submit_workflow_request = 1;
   string parent_experiment_uuid = 2;
@@ -152,6 +159,10 @@ message SubmitSubWorkflowRequest {
 
 message SubmitWorkflowResponse {
   string experiment_uuid = 1;
+}
+
+message SubmitWorkflowsResponse {
+  repeated string experiment_uuids = 1;
 }
 
 message ImportTaskRequest {
@@ -246,6 +257,7 @@ service Axii {
     option deprecated = true;
   };
   rpc SubmitWorkflow(SubmitWorkflowRequest) returns (SubmitWorkflowResponse);
+  rpc SubmitWorkflows(SubmitWorkflowsRequest) returns (SubmitWorkflowsResponse);
   rpc SubmitSubWorkflow(SubmitSubWorkflowRequest) returns (SubmitWorkflowResponse);
 
   rpc EvalParameters(EvalParametersRequest) returns (EvalParametersResponse);
