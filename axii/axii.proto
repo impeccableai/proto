@@ -150,7 +150,8 @@ message SubmitWorkflowsRequest {
   string template_version = 2;
   repeated workflow.WorkflowTemplate.Parameters parameters = 3;
   map<string, string> inputs = 4;
-  repeated string tags = 5;}
+  repeated string tags = 5;
+}
 
 message SubmitSubWorkflowRequest {
   SubmitWorkflowRequest submit_workflow_request = 1;
